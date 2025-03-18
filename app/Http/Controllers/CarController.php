@@ -1,0 +1,74 @@
+<?php
+
+// app/Http/Controllers/CarController.php
+namespace App\Http\Controllers;
+
+use Inertia\Inertia;
+use App\Models\Car;
+use Illuminate\Http\Request;
+
+class CarController extends Controller
+{
+    // List all cars
+    public function index()
+    {
+        $cars = Car::all();
+        return Inertia::render('cars', [
+            'cars' => $cars,
+        ]);
+    }
+
+    // Store a new car
+    public function store(Request $request)
+    {
+        $request->validate([
+            'brand' => 'required|string',
+            'model' => 'required|string',
+            'category' => 'required|string',
+            'fuel' => 'required|string',
+            'transmission' => 'required|string',
+            'luggage' => 'required|integer',
+            'seats' => 'required|integer',
+            'ac' => 'required|boolean',
+            'doors' => 'required|integer',
+            'image' => 'required|string',
+            'discount' => 'nullable|integer',
+            'price_per_day' => 'required|numeric',
+        ]);
+
+        $car = Car::create($request->all());
+
+        return redirect()->route('cars')->with('success', 'Car created successfully.');
+    }
+
+
+    // Update a car
+    public function update(Request $request, Car $car)
+    {
+        $request->validate([
+            'brand' => 'required|string',
+            'model' => 'required|string',
+            'category' => 'required|string',
+            'fuel' => 'required|string',
+            'transmission' => 'required|string',
+            'luggage' => 'required|integer',
+            'seats' => 'required|integer',
+            'ac' => 'required|boolean',
+            'doors' => 'required|integer',
+            'image' => 'required|string',
+            'discount' => 'nullable|integer',
+            'price_per_day' => 'required|numeric',
+        ]);
+
+        $car->update($request->all());
+
+        return redirect()->route('cars')->with('success', 'Car updated successfully.');
+    }
+
+    // Delete a car
+    public function destroy(Car $car)
+    {
+        $car->delete();
+        return redirect()->route('cars')->with('success', 'Car deleted successfully.');
+    }
+}
