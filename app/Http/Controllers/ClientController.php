@@ -9,12 +9,20 @@ use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
-    // List all clients
-    public function index()
+    public function index(Request $request)
     {
-        $clients = Client::all();
-        return Inertia::render('clients', [
+        $search = $request->query('search');
+
+        $clients = Client::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('full_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            })
+            ->get();
+
+        return Inertia::render('clients/index', [
             'clients' => $clients,
+            'search' => $search,
         ]);
     }
 
@@ -32,7 +40,7 @@ class ClientController extends Controller
 
         $client = Client::create($request->all());
 
-        return redirect()->route('clients')->with('success', 'Client created successfully.');
+        return redirect()->route('clients.index')->with('success', 'Client created successfully.');
     }
 
     // Show a specific client
@@ -57,13 +65,13 @@ class ClientController extends Controller
 
         $client->update($request->all());
 
-        return redirect()->route('clients')->with('success', 'Client updated successfully.');
+        return redirect()->route('clients.index')->with('success', 'Client updated successfully.');
     }
 
     // Delete a client
     public function destroy(Client $client)
     {
         $client->delete();
-        return redirect()->route('clients')->with('success', 'Client deleted successfully.');
+        return redirect()->route('clients.index')->with('success', 'Client deleted successfully.');
     }
 }
