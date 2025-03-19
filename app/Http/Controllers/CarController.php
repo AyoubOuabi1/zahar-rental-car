@@ -9,16 +9,14 @@ use Illuminate\Http\Request;
 
 class CarController extends Controller
 {
-    // List all cars
     public function index()
     {
         $cars = Car::all();
-        return Inertia::render('cars', [
+        return Inertia::render('cars/index', [
             'cars' => $cars,
         ]);
     }
 
-    // Store a new car
     public function store(Request $request)
     {
         $request->validate([
@@ -38,11 +36,10 @@ class CarController extends Controller
 
         $car = Car::create($request->all());
 
-        return redirect()->route('cars')->with('success', 'Car created successfully.');
+        return redirect()->route('cars.index')->with('success', 'Car created successfully.');
     }
 
 
-    // Update a car
     public function update(Request $request, Car $car)
     {
         $request->validate([
@@ -62,13 +59,12 @@ class CarController extends Controller
 
         $car->update($request->all());
 
-        return redirect()->route('cars')->with('success', 'Car updated successfully.');
+        return redirect()->route('cars.index')->with('success', 'Car updated successfully.');
     }
 
-    // Delete a car
     public function destroy(Car $car)
     {
         $car->delete();
-        return redirect()->route('cars')->with('success', 'Car deleted successfully.');
+        return redirect()->route('cars.index')->with('success', 'Car deleted successfully.');
     }
 }

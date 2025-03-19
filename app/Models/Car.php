@@ -10,6 +10,6 @@ class Car extends Model
 
     protected $fillable = [
         'brand', 'model', 'category', 'fuel', 'transmission',
-        'luggage', 'seats', 'ac', 'doors', 'image', 'discount', 'price_per_da   y'
+        'luggage', 'seats', 'ac', 'doors', 'image', 'discount', 'price_per_day'
     ];
 }
