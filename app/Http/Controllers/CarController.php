@@ -1,6 +1,5 @@
 <?php
 
-// app/Http/Controllers/CarController.php
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
@@ -9,9 +8,16 @@ use Illuminate\Http\Request;
 
 class CarController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $cars = Car::all();
+        $search = $request->query('search');
+
+        $cars = Car::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('brand', 'like', "%{$search}%")
+                    ->orWhere('model', 'like', "%{$search}%");
+            })
+            ->get();
         return Inertia::render('cars/index', [
             'cars' => $cars,
         ]);

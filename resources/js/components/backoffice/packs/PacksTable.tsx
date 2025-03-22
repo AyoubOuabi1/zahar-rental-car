@@ -5,9 +5,7 @@ import {
     getCoreRowModel,
     getPaginationRowModel,
     useReactTable,
-    getFilteredRowModel,
 } from "@tanstack/react-table";
-import { Car } from "@/types/Car";
 import { Button } from "@/components/ui/button";
 import {
     Table,
@@ -30,102 +28,57 @@ import {
     AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
+import { Pack } from '@/types/Pack';
 
-interface CarsTableProps {
-    cars: Car[];
-    onEdit: (car: Car) => void;
+interface PacksTableProps {
+    packs: Pack[];
+    onEdit: (pack: Pack) => void;
     onDelete: (id: number | undefined) => void;
 }
 
-export const CarsTable = ({ cars, onEdit, onDelete }: CarsTableProps) => {
+export const PacksTable = ({ packs, onEdit, onDelete }: PacksTableProps) => {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [carToDelete, setCarToDelete] = useState<number | undefined>(undefined);
-    const [globalFilter, setGlobalFilter] = useState("");
+    const [packToDelete, setPackToDelete] = useState<number | undefined>(undefined);
 
     const handleDelete = () => {
-        if (carToDelete) {
-            onDelete(carToDelete);
+        if (packToDelete) {
+            onDelete(packToDelete);
             setIsDeleteDialogOpen(false);
         }
     };
 
-    const columns: ColumnDef<Car>[] = [
+    const columns: ColumnDef<Pack>[] = [
         {
-            accessorKey: "image",
-            header: "Image",
-            cell: ({ row }) => (
-                <div className="w-24 h-24 flex items-center justify-center">
-                    <img
-                        src={row.original.image}
-                        alt={`${row.original.brand} ${row.original.model}`}
-                        className="w-full h-full object-contain"
-                    />
-                </div>
-            ),
+            accessorKey: "title",
+            header: "Title",
         },
         {
-            accessorKey: "brand",
-            header: "Brand",
+            accessorKey: "description",
+            header: "Description",
         },
         {
-            accessorKey: "model",
-            header: "Model",
-        },
-        {
-            accessorKey: "category",
-            header: "Category",
-        },
-        {
-            accessorKey: "fuel",
-            header: "Fuel",
-        },
-        {
-            accessorKey: "transmission",
-            header: "Transmission",
-        },
-        {
-            accessorKey: "luggage",
-            header: "Luggage",
-        },
-        {
-            accessorKey: "seats",
-            header: "Seats",
-        },
-        {
-            accessorKey: "ac",
-            header: "A/C",
-            cell: ({ row }) => (row.original.ac ? "Yes" : "No"),
-        },
-        {
-            accessorKey: "doors",
-            header: "Doors",
-        },
-        {
-            accessorKey: "discount",
-            header: "Discount",
+            accessorKey: "status",
+            header: "Active",
         },
         {
             accessorKey: "price_per_day",
             header: "Price/Day",
+            cell: ({ row }) => `$${row.original.price_per_day}`,
         },
         {
             id: "actions",
             cell: ({ row }) => {
-                const car = row.original;
+                const pack = row.original;
 
                 return (
                     <div className="flex space-x-2">
-                        {/* Edit Button */}
-                        <Button variant="ghost" onClick={() => onEdit(car)}>
+                        <Button variant="ghost" onClick={() => onEdit(pack)}>
                             <Edit className="w-4 h-4" />
                         </Button>
-
-                        {/* Delete Button */}
                         <Button
                             variant="ghost"
                             onClick={() => {
-                                setCarToDelete(car.id);
+                                setPackToDelete(pack.id);
                                 setIsDeleteDialogOpen(true);
                             }}
                         >
@@ -138,29 +91,14 @@ export const CarsTable = ({ cars, onEdit, onDelete }: CarsTableProps) => {
     ];
 
     const table = useReactTable({
-        data: cars,
+        data: packs,
         columns,
-        state: {
-            globalFilter,
-        },
-        onGlobalFilterChange: setGlobalFilter,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
     });
 
     return (
         <>
-            {/* Search Input
-            <div className="flex items-center justify-between mb-4">
-                <Input
-                    placeholder="Search cars..."
-                    value={globalFilter}
-                    onChange={(e) => setGlobalFilter(e.target.value)}
-                    className="max-w-sm"
-                />
-            </div>*/}
-
             {/* Table */}
             <div className="rounded-md border">
                 <Table>
@@ -226,7 +164,7 @@ export const CarsTable = ({ cars, onEdit, onDelete }: CarsTableProps) => {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete the car.
+                            This action cannot be undone. This will permanently delete the pack.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
