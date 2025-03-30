@@ -6,32 +6,29 @@ import AppLayout from '@/layouts/app-layout';
 import { Plus, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Pack } from '@/types/Pack';
-import { PackItem } from '@/types/PackItem ';
-import { PackItemForm } from '@/components/backoffice/packs--items/PackItemForm ';
+import { PackItem, Pack } from '@/types/PackItem ';
+import { PackItemForm } from '@/components/backoffice/packs--items/PackItemForm';
 import { PackItemsTable } from '@/components/backoffice/packs--items/PackItemsTable';
 
 const breadcrumbs = [
-    { title: 'Packs', href: '/packs' },
-    { title: 'Pack Items', href: '/packs/{pack.id}/items' },
+    { title: 'Pack Items', href: '/packitems' },
 ];
 
-export default function PackItemsManagement({ pack }: { pack: Pack }) {
+export default function Index() {
     const { packItems, packs, search } = usePage<{ packItems: PackItem[]; packs: Pack[]; search?: string }>().props;
     const [editingPackItem, setEditingPackItem] = useState<PackItem | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState(search || '');
 
     const { data, setData, post, put, delete: destroy, processing, errors, reset } = useForm<PackItem>({
-        pack_id: pack.id, // Default to the current pack ID
+        pack_id: '',
         title: '',
-        description: '',
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         editingPackItem
-            ? put(route('packs.items.update', { pack: pack.id, packItem: editingPackItem.id }), {
+            ? put(route('packitems.update', editingPackItem.id), {
                 data,
                 onSuccess: () => {
                     reset();
@@ -39,7 +36,7 @@ export default function PackItemsManagement({ pack }: { pack: Pack }) {
                     toast('Pack item updated successfully.');
                 },
             })
-            : post(route('packs.items.store', pack.id), {
+            : post(route('packitems.store'), {
                 data,
                 onSuccess: () => {
                     reset();
@@ -57,7 +54,7 @@ export default function PackItemsManagement({ pack }: { pack: Pack }) {
 
     const handleDelete = (id: number | undefined) => {
         if (id) {
-            destroy(route('packs.items.destroy', { pack: pack.id, packItem: id }), {
+            destroy(route('packitems.destroy', id), {
                 onSuccess: () => {
                     toast('Pack item deleted successfully.');
                 },
@@ -67,14 +64,14 @@ export default function PackItemsManagement({ pack }: { pack: Pack }) {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        window.location.href = `/packs/${pack.id}/items?search=${searchQuery}`;
+        window.location.href = `/packitems?search=${searchQuery}`;
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`${pack.title} - Items`} />
+            <Head title="Pack Items Management" />
             <div className="container mx-auto p-4">
-                <h1 className="text-2xl font-bold mb-4">{pack.title} - Items</h1>
+                <h1 className="text-2xl font-bold mb-4">Pack Items Management</h1>
 
                 {/* Search Bar */}
                 <form onSubmit={handleSearch} className="mb-4 flex items-center gap-2">
@@ -114,13 +111,14 @@ export default function PackItemsManagement({ pack }: { pack: Pack }) {
                             errors={errors}
                             processing={processing}
                             editingPackItem={editingPackItem}
-                            packs={packs} // Pass the list of packs to the form
                             onSubmit={submit}
                             onValueChange={(field, value) => setData(field, value)}
+                            packs={packs} // Pass packs to the form
                         />
                     </DialogContent>
                 </Dialog>
 
+                {/* Pack Items Table */}
                 <PackItemsTable packItems={packItems} onEdit={handleEdit} onDelete={handleDelete} />
             </div>
         </AppLayout>

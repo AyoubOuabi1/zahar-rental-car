@@ -28,7 +28,7 @@ import {
     AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
-import { PackItem } from '@/types/PackItem';
+import { PackItem } from '@/types/PackItem ';
 
 interface PackItemsTableProps {
     packItems: PackItem[];
@@ -49,12 +49,12 @@ export const PackItemsTable = ({ packItems, onEdit, onDelete }: PackItemsTablePr
 
     const columns: ColumnDef<PackItem>[] = [
         {
-            accessorKey: "title",
-            header: "Title",
+            accessorKey: "pack_id",
+            header: "Pack ID",
         },
         {
-            accessorKey: "description",
-            header: "Description",
+            accessorKey: "title",
+            header: "Title",
         },
         {
             id: "actions",

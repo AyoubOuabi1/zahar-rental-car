@@ -26,7 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('packs', PackController::class);
 
-    Route::resource('pack-items', PackItemController::class);
+    Route::resource('packitems', PackItemController::class);
 
     Route::resource('added-options', AddedOptionController::class);
 

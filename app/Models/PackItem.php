@@ -10,7 +10,7 @@ class PackItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'pack_id', 'title', 'description'
+        'pack_id', 'title'
     ];
 
     public function pack()

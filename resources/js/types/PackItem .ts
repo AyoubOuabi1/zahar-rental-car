@@ -2,5 +2,9 @@ export interface PackItem {
     id?: number;
     pack_id: number;
     title: string;
-    description: string;
+}
+
+export interface Pack {
+    id: number;
+    title: string;
 }

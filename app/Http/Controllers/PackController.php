@@ -64,7 +64,6 @@ class PackController extends Controller
         return redirect()->route('packs.index')->with('success', 'Pack updated successfully.');
     }
 
-    // Delete a pack
     public function destroy(Pack $pack)
     {
         $pack->delete();

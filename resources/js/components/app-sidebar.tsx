@@ -34,7 +34,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Pack Items',
-        href: '/pack-items',
+        href: '/packitems',
         icon: Settings,
     },
     {
