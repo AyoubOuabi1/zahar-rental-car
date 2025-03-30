@@ -28,56 +28,65 @@ import {
     AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
-import { PackItem,Pack} from '@/types/PackItem ';
+import { Place } from '@/types/Place';
 
-interface PackItemsTableProps {
-    packItems: PackItem[];
-    packs: Pack[];  // Add packs to props
-    onEdit: (packItem: PackItem) => void;
+interface PlacesTableProps {
+    places: Place[];
+    onEdit: (place: Place) => void;
     onDelete: (id: number | undefined) => void;
 }
 
-export const PackItemsTable = ({ packItems,packs, onEdit, onDelete }: PackItemsTableProps) => {
+export const PlacesTable = ({ places, onEdit, onDelete }: PlacesTableProps) => {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [packItemToDelete, setPackItemToDelete] = useState<number | undefined>(undefined);
-    const getPackName = (packId: number) => {
-        const pack = packs.find(p => p.id === packId);
-        return pack ? pack.title : 'Unknown Pack';
-    };
+    const [placeToDelete, setPlaceToDelete] = useState<number | undefined>(undefined);
+
     const handleDelete = () => {
-        if (packItemToDelete) {
-            onDelete(packItemToDelete);
+        if (placeToDelete) {
+            onDelete(placeToDelete);
             setIsDeleteDialogOpen(false);
         }
     };
 
-    const columns: ColumnDef<PackItem>[] = [
-        {
-            accessorKey: "pack_id",
-            header: "Pack Name",
-            cell: ({ row }) => {
-                const packId = row.getValue("pack_id") as number;
-                return getPackName(packId);
-            },
-        },
+    const columns: ColumnDef<Place>[] = [
         {
             accessorKey: "title",
             header: "Title",
         },
         {
+            accessorKey: "description",
+            header: "Description",
+            cell: ({ row }) => (
+                <div
+                    className="prose prose-sm max-w-none max-h-20 overflow-y-auto"
+                    dangerouslySetInnerHTML={{ __html: row.getValue("description") }}
+                />
+            ),
+        },
+        {
+            accessorKey: "image_url",
+            header: "Image",
+            cell: ({ row }) => (
+                <img
+                    src={row.getValue("image_url")}
+                    alt="Place"
+                    className="h-10 w-10 object-cover rounded"
+                />
+            ),
+        },
+        {
             id: "actions",
             cell: ({ row }) => {
-                const packItem = row.original;
+                const place = row.original;
 
                 return (
                     <div className="flex space-x-2">
-                        <Button variant="ghost" onClick={() => onEdit(packItem)}>
+                        <Button variant="ghost" onClick={() => onEdit(place)}>
                             <Edit className="w-4 h-4" />
                         </Button>
                         <Button
                             variant="ghost"
                             onClick={() => {
-                                setPackItemToDelete(packItem.id);
+                                setPlaceToDelete(place.id);
                                 setIsDeleteDialogOpen(true);
                             }}
                         >
@@ -90,7 +99,7 @@ export const PackItemsTable = ({ packItems,packs, onEdit, onDelete }: PackItemsT
     ];
 
     const table = useReactTable({
-        data: packItems,
+        data: places,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -98,7 +107,6 @@ export const PackItemsTable = ({ packItems,packs, onEdit, onDelete }: PackItemsT
 
     return (
         <>
-            {/* Table */}
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -134,7 +142,6 @@ export const PackItemsTable = ({ packItems,packs, onEdit, onDelete }: PackItemsT
                 </Table>
             </div>
 
-            {/* Pagination */}
             <div className="flex items-center justify-end space-x-2 py-4">
                 <Button
                     variant="outline"
@@ -154,16 +161,15 @@ export const PackItemsTable = ({ packItems,packs, onEdit, onDelete }: PackItemsT
                 </Button>
             </div>
 
-            {/* Delete Confirmation Dialog */}
             <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <AlertDialogTrigger>
-                    <span className="hidden"></span> {/* Hidden trigger */}
+                    <span className="hidden"></span>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete the pack item.
+                            This action cannot be undone. This will permanently delete the place.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

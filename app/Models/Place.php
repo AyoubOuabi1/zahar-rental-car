@@ -12,4 +12,7 @@ class Place extends Model
     protected $fillable = [
         'title', 'description', 'image_url'
     ];
+    protected $casts = [
+        'description' => 'string', // Or create a custom cast for HTML
+    ];
 }

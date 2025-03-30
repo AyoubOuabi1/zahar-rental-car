@@ -6,78 +6,93 @@ import AppLayout from '@/layouts/app-layout';
 import { Plus, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { PackItem, Pack } from '@/types/PackItem ';
-import { PackItemForm } from '@/components/backoffice/packs--items/PackItemForm';
-import { PackItemsTable } from '@/components/backoffice/packs--items/PackItemsTable';
+import { PlaceForm } from '@/components/backoffice/places/PlaceForm';
+import { PlacesTable } from '@/components/backoffice/places/PlacesTable';
+import { Place } from '@/types/Place';
 
 const breadcrumbs = [
-    { title: 'Pack Items', href: '/packitems' },
+    { title: 'Places', href: '/places' },
 ];
 
-export default function Index() {
-    const { packItems, packs, search } = usePage<{ packItems: PackItem[]; packs: Pack[]; search?: string }>().props;
-    const [editingPackItem, setEditingPackItem] = useState<PackItem | null>(null);
+export default function PlacesManagement() {
+    const { places } = usePage<{ places: Place[] }>().props;
+    const [editingPlace, setEditingPlace] = useState<Place | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState(search || '');
+    const [searchQuery, setSearchQuery] = useState('');
 
-    const { data, setData, post, put, delete: destroy, processing, errors, reset } = useForm<PackItem>({
-        pack_id: '',
+    const { data, setData, post, put, delete: destroy, processing, errors, reset } = useForm<Place>({
         title: '',
+        description: '',
+        image_url: '',
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        editingPackItem
-            ? put(route('packitems.update', editingPackItem.id), {
-                data,
+        editingPlace
+            ? put(route('places.update', { place: editingPlace.id }), {
+                title: data.title,
+                description: data.description,
+                image_url: data.image_url,
                 onSuccess: () => {
                     reset();
                     setIsDialogOpen(false);
-                    toast('Pack item updated successfully.');
+                    toast.success('Place updated successfully.');
                 },
+                onError: (errors) => {
+                    toast.error('Update failed: ' + JSON.stringify(errors));
+                }
             })
-            : post(route('packitems.store'), {
-                data,
+            : post(route('places.store'), {
+                title: data.title,
+                description: data.description,
+                image_url: data.image_url,
                 onSuccess: () => {
                     reset();
                     setIsDialogOpen(false);
-                    toast('Pack item added successfully.');
-                },
+                    toast.success('Place created successfully.');
+                }
             });
     };
 
-    const handleEdit = (packItem: PackItem) => {
-        setEditingPackItem(packItem);
-        setData(packItem);
+    const handleEdit = (place: Place) => {
+        setEditingPlace(place);
+        setData({
+            title: place.title,
+            description: place.description,
+            image_url: place.image_url,
+        });
         setIsDialogOpen(true);
     };
 
     const handleDelete = (id: number | undefined) => {
         if (id) {
-            destroy(route('packitems.destroy', id), {
+            destroy(route('places.destroy', { place: id }), {
                 onSuccess: () => {
-                    toast('Pack item deleted successfully.');
+                    toast.success('Place deleted successfully.');
                 },
+                onError: () => {
+                    toast.error('Delete failed');
+                }
             });
         }
     };
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        window.location.href = `/packitems?search=${searchQuery}`;
+        // Implement search logic here or filter client-side
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Pack Items Management" />
+            <Head title="Places Management" />
             <div className="container mx-auto p-4">
-                <h1 className="text-2xl font-bold mb-4">Pack Items Management</h1>
+                <h1 className="text-2xl font-bold mb-4">Places Management</h1>
 
                 {/* Search Bar */}
                 <form onSubmit={handleSearch} className="mb-4 flex items-center gap-2">
                     <Input
                         type="text"
-                        placeholder="Search pack items by title..."
+                        placeholder="Search places by title..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="flex-1"
@@ -90,36 +105,35 @@ export default function Index() {
                 <Dialog open={isDialogOpen} onOpenChange={(open) => {
                     if (!open) {
                         reset();
-                        setEditingPackItem(null);
+                        setEditingPlace(null);
                     }
                     setIsDialogOpen(open);
                 }}>
                     <DialogTrigger asChild>
                         <Button className="mb-4">
-                            <Plus className="w-4 h-4 mr-2" /> Add Pack Item
+                            <Plus className="w-4 h-4 mr-2" /> Add Place
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>{editingPackItem ? 'Edit Pack Item' : 'Add Pack Item'}</DialogTitle>
+                            <DialogTitle>{editingPlace ? 'Edit Place' : 'Add Place'}</DialogTitle>
                             <DialogDescription>
-                                {editingPackItem ? 'Update the pack item details.' : 'Add a new pack item to the list.'}
+                                {editingPlace ? 'Update the place details.' : 'Add a new place to the list.'}
                             </DialogDescription>
                         </DialogHeader>
-                        <PackItemForm
+                        <PlaceForm
                             data={data}
                             errors={errors}
                             processing={processing}
-                            editingPackItem={editingPackItem}
+                            editingPlace={editingPlace}
                             onSubmit={submit}
                             onValueChange={(field, value) => setData(field, value)}
-                            packs={packs} // Pass packs to the form
                         />
                     </DialogContent>
                 </Dialog>
 
-                {/* Pack Items Table */}
-                <PackItemsTable packItems={packItems} packs={packs} onEdit={handleEdit} onDelete={handleDelete} />
+                {/* Places Table */}
+                <PlacesTable places={places} onEdit={handleEdit} onDelete={handleDelete} />
             </div>
         </AppLayout>
     );

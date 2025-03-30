@@ -43,22 +43,22 @@ class PackItemController extends Controller
     }
 
     // Update a pack item
-    public function update(Request $request, PackItem $packItem)
+    public function update(Request $request, PackItem $packitem)
     {
         $request->validate([
             'pack_id' => 'required|exists:packs,id',
             'title' => 'required|string ',
         ]);
 
-        $packItem->update($request->all());
+        $packitem->update($request->all());
 
         return redirect()->route('packitems.index')->with('success', 'Pack item updated successfully.');
     }
 
     // Delete a pack item
-    public function destroy(PackItem $packItem)
+    public function destroy(PackItem $packitem)
     {
-        $packItem->delete();
+        $packitem->delete();
         return redirect()->route('packitems.index')->with('success', 'Pack item deleted successfully.');
     }
 }

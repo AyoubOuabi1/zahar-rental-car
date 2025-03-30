@@ -30,12 +30,12 @@ export const PackItemForm = ({
                                  editingPackItem,
                                  onSubmit,
                                  onValueChange,
-                                 packs, // Receive packs from the parent
+                                 packs,
                              }: PackItemFormProps) => {
     return (
         <form onSubmit={onSubmit} className="grid gap-4">
             <div className="grid grid-cols-2 gap-4">
-                {/* Pack ID Select */}z
+                {/* Pack ID Select */}
                 <div>
                     <Label htmlFor="pack_id">Pack</Label>
                     <Select

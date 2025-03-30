@@ -6,58 +6,61 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Place;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PlaceController extends Controller
 {
-    // List all places
-    public function index()
+    public function index(Request $request)
     {
-        $places = Place::all();
-        return Inertia::render('places', [
+        $search = $request->query('search');
+
+        $places = Place::when($search, function ($query, $search) {
+            return $query->where('title', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%");
+        })->get();
+
+        return Inertia::render('places/index', [
             'places' => $places,
+            'search' => $search,
         ]);
     }
 
-    // Store a new place
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string',
+            'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'image_url' => 'required|string',
+            'image_url' => 'required|url',
         ]);
 
-        $place = Place::create($request->all());
-
-        return redirect()->route('places')->with('success', 'Place created successfully.');
-    }
-
-    // Show a specific place
-    public function show(Place $place)
-    {
-        return Inertia::render('Places/Show', [
-            'place' => $place,
+        Place::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'image_url' => $request->image_url,
         ]);
+
+        return redirect()->route('places.index')->with('success', 'Place created successfully.');
     }
 
-    // Update a place
     public function update(Request $request, Place $place)
     {
+        Log::debug('Updating place', ['request' => $request->all(), 'place' => $place->toArray()]);
+
         $request->validate([
-            'title' => 'required|string',
+            'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'image_url' => 'required|string',
+            'image_url' => 'required|url',
         ]);
 
         $place->update($request->all());
 
-        return redirect()->route('places')->with('success', 'Place updated successfully.');
+        return redirect()->route('places.index')->with('success', 'Place updated successfully.');
     }
 
-    // Delete a place
     public function destroy(Place $place)
     {
+        Log::debug('Deleting place', ['place' => $place->toArray()]);
         $place->delete();
-        return redirect()->route('places')->with('success', 'Place deleted successfully.');
+        return redirect()->route('places.index')->with('success', 'Place deleted successfully.');
     }
 }

@@ -159,4 +159,28 @@
     }
 }
 
+/* Remove editor border */
+.ql-container.ql-snow {
+    border: none;
+}
+
+/* Toolbar styling */
+.ql-toolbar.ql-snow {
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+/* Editor content area */
+.ql-editor {
+    min-height: 150px;
+    padding: 12px;
+    font-family: inherit;
+}
+
+/* Remove focus outline */
+.ql-editor:focus {
+    outline: none;
+}
+
 
