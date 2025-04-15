@@ -13,12 +13,11 @@ class AddedOptionController extends Controller
     public function index()
     {
         $addedOptions = AddedOption::all();
-        return Inertia::render('addedOptions', [
+        return Inertia::render('added-options/index', [
             'addedOptions' => $addedOptions,
         ]);
     }
 
-    // Store a new added option
     public function store(Request $request)
     {
         $request->validate([
@@ -29,7 +28,7 @@ class AddedOptionController extends Controller
 
         $addedOption = AddedOption::create($request->all());
 
-        return redirect()->route('added-options')->with('success', 'Added option created successfully.');
+        return redirect()->route('added-options.index')->with('success', 'Added option created successfully.');
     }
 
     // Show a specific added option
@@ -51,13 +50,13 @@ class AddedOptionController extends Controller
 
         $addedOption->update($request->all());
 
-        return redirect()->route('added-options')->with('success', 'Added option updated successfully.');
+        return redirect()->route('added-options.index')->with('success', 'Added option updated successfully.');
     }
 
     // Delete an added option
     public function destroy(AddedOption $addedOption)
     {
         $addedOption->delete();
-        return redirect()->route('added-options')->with('success', 'Added option deleted successfully.');
+        return redirect()->route('added-options.index')->with('success', 'Added option deleted successfully.');
     }
 }

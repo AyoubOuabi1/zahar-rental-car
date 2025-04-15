@@ -22,7 +22,6 @@ return new class extends Migration
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
             $table->string('status')->default('Pending');
             $table->foreignId('pack_id')->nullable()->constrained()->onDelete('set null');
-            $table->json('added_option_ids')->nullable();
             $table->decimal('total_price', 8, 2);
             $table->timestamps();
         });

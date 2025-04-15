@@ -1,56 +1,123 @@
 <?php
-
-// app/Http/Controllers/ReservationController.php
 namespace App\Http\Controllers;
 
+use App\Models\Car;
+use App\Models\Client;
+use App\Models\Pack;
+use App\Models\Place;
 use Inertia\Inertia;
 use App\Models\Reservation;
+use App\Models\AddedOption;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class ReservationController extends Controller
 {
-    // List all reservations
     public function index()
     {
-        $reservations = Reservation::with(['car', 'client', 'pack', 'pickUpPlace', 'dropOffPlace'])->get();
-        return Inertia::render('reservations', [
-            'reservations' => $reservations,
+        return Inertia::render('reservations/index', [
+            'reservations' => Reservation::with([
+                'car',
+                'client',
+                'pack',
+                'pickUpPlace',
+                'dropOffPlace',
+                'addedOptions'
+            ])->latest()->get(),
+            'cars' => Car::all(),
+            'clients' => Client::all(),
+            'packs' => Pack::all(),
+            'places' => Place::all(),
+            'options' => AddedOption::all(),
+            'status' => session('status'),
         ]);
     }
 
-    // Store a new reservation
     public function store(Request $request)
     {
-        $request->validate([
-            'date_from' => 'required|date',
+        $validated = $request->validate([
+            'flight_number' => 'nullable|string|max:20',
+            'date_from' => 'required|date|after_or_equal:today',
             'date_to' => 'required|date|after:date_from',
             'pick_up_place_id' => 'required|exists:places,id',
             'drop_off_place_id' => 'required|exists:places,id',
             'car_id' => 'required|exists:cars,id',
             'client_id' => 'required|exists:clients,id',
             'pack_id' => 'nullable|exists:packs,id',
-            'added_option_ids' => 'nullable|array',
-            'total_price' => 'required|numeric',
-            'vol_number' => 'nullable|string',
+            'added_options' => 'nullable|array',
+            'added_options.*.id' => 'required|exists:added_options,id',
+            'added_options.*.quantity' => 'required|integer|min:1',
+            'added_options.*.price_per_day' => 'required|numeric|min:0',
         ]);
 
-        $reservation = Reservation::create($request->all());
+        try {
+            DB::transaction(function () use ($validated) {
+                $reservation = Reservation::create([
+                    'flight_number' => $validated['flight_number'] ?? null,
+                    'date_from' => $validated['date_from'],
+                    'date_to' => $validated['date_to'],
+                    'pick_up_place_id' => $validated['pick_up_place_id'],
+                    'drop_off_place_id' => $validated['drop_off_place_id'],
+                    'car_id' => $validated['car_id'],
+                    'client_id' => $validated['client_id'],
+                    'pack_id' => $validated['pack_id'] ?? null,
+                    'status' => 'confirmed',
+                ]);
 
-        return redirect()->route('reservations')->with('success', 'Reservation created successfully.');
+                if (!empty($validated['added_options'])) {
+                    $optionsWithPivot = collect($validated['added_options'])
+                        ->mapWithKeys(fn($option) => [
+                            $option['id'] => [
+                                'quantity' => $option['quantity'],
+                                'price_per_day' => $option['price_per_day']
+                            ]
+                        ])
+                        ->toArray();
+
+                    $reservation->addedOptions()->attach($optionsWithPivot);
+                }
+
+                $reservation->calculateTotalPrice();
+            });
+
+            return redirect()->route('reservations.index')
+                ->with('success', 'Reservation created successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to create reservation: ' . $e->getMessage());
+        }
     }
 
-    // Show a specific reservation
     public function show(Reservation $reservation)
     {
         return Inertia::render('Reservations/Show', [
-            'reservation' => $reservation->load(['car', 'client', 'pack', 'pickUpPlace', 'dropOffPlace']),
+            'reservation' => $reservation->load([
+                'car',
+                'client',
+                'pack',
+                'pickUpPlace',
+                'dropOffPlace',
+                'addedOptions'
+            ]),
         ]);
     }
 
-    // Update a reservation
+    public function edit(Reservation $reservation)
+    {
+        return Inertia::render('reservations/Edit', [
+            'reservation' => $reservation->load('addedOptions'),
+            'cars' => Car::all(),
+            'clients' => Client::all(),
+            'packs' => Pack::all(),
+            'places' => Place::all(),
+            'options' => AddedOption::all(),
+        ]);
+    }
+
     public function update(Request $request, Reservation $reservation)
     {
-        $request->validate([
+        $validated = $request->validate([
+            'flight_number' => 'nullable|string|max:20',
             'date_from' => 'required|date',
             'date_to' => 'required|date|after:date_from',
             'pick_up_place_id' => 'required|exists:places,id',
@@ -58,20 +125,57 @@ class ReservationController extends Controller
             'car_id' => 'required|exists:cars,id',
             'client_id' => 'required|exists:clients,id',
             'pack_id' => 'nullable|exists:packs,id',
-            'added_option_ids' => 'nullable|array',
-            'total_price' => 'required|numeric',
-            'vol_number' => 'nullable|string|max:10', // Flight number
+            'status' => ['required', Rule::in(['pending', 'confirmed', 'cancelled', 'completed'])],
+            'added_options' => 'nullable|array',
+            'added_options.*.id' => 'required|exists:added_options,id',
+            'added_options.*.quantity' => 'required|integer|min:1',
+            'added_options.*.price_per_day' => 'required|numeric|min:0',
         ]);
 
-        $reservation->update($request->all());
+        try {
+            DB::transaction(function () use ($validated, $reservation) {
+                $reservation->update([
+                    'flight_number' => $validated['flight_number'] ?? null,
+                    'date_from' => $validated['date_from'],
+                    'date_to' => $validated['date_to'],
+                    'pick_up_place_id' => $validated['pick_up_place_id'],
+                    'drop_off_place_id' => $validated['drop_off_place_id'],
+                    'car_id' => $validated['car_id'],
+                    'client_id' => $validated['client_id'],
+                    'pack_id' => $validated['pack_id'] ?? null,
+                    'status' => $validated['status'],
+                ]);
 
-        return redirect()->route('reservations')->with('success', 'Reservation updated successfully.');
+                $optionsWithPivot = isset($validated['added_options'])
+                    ? collect($validated['added_options'])
+                        ->mapWithKeys(fn($option) => [
+                            $option['id'] => [
+                                'quantity' => $option['quantity'],
+                                'price_per_day' => $option['price_per_day']
+                            ]
+                        ])
+                        ->toArray()
+                    : [];
+
+                $reservation->addedOptions()->sync($optionsWithPivot);
+                $reservation->calculateTotalPrice();
+            });
+
+            return redirect()->route('reservations.index')
+                ->with('success', 'Reservation updated successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to update reservation: ' . $e->getMessage());
+        }
     }
 
-    // Delete a reservation
     public function destroy(Reservation $reservation)
     {
-        $reservation->delete();
-        return redirect()->route('reservations')->with('success', 'Reservation deleted successfully.');
+        try {
+            $reservation->delete();
+            return redirect()->route('reservations.index')
+                ->with('success', 'Reservation deleted successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to delete reservation: ' . $e->getMessage());
+        }
     }
 }

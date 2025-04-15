@@ -12,7 +12,16 @@ class Place extends Model
     protected $fillable = [
         'title', 'description', 'image_url'
     ];
+    public function pickupReservations()
+    {
+        return $this->hasMany(Reservation::class, 'pick_up_place_id');
+    }
+
+    public function dropoffReservations()
+    {
+        return $this->hasMany(Reservation::class, 'drop_off_place_id');
+    }
     protected $casts = [
-        'description' => 'string', // Or create a custom cast for HTML
+        'description' => 'string',
     ];
 }

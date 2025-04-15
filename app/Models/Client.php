@@ -13,4 +13,8 @@ class Client extends Model
         'identity_or_passport_number', 'full_name', 'email',
         'mobile_number', 'address', 'permit_license_id'
     ];
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
 }

@@ -1,0 +1,201 @@
+import { FormEventHandler } from 'react';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import InputError from '@/components/input-error';
+import { LoaderCircle } from 'lucide-react';
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
+} from '@/components/ui/select';
+import { MultiSelect } from '@/components/ui/multi-select';
+import { Reservation, Car, Client, Pack, Place, AddedOption } from '@/types/Reservation';
+
+interface ReservationFormProps {
+    data: Reservation;
+    errors: Record<string, string>;
+    processing: boolean;
+    editingReservation: Reservation | null;
+    onSubmit: FormEventHandler;
+    onValueChange: (field: keyof Reservation, value: any) => void;
+    cars: Car[];
+    clients: Client[];
+    packs: Pack[];
+    places: Place[];
+    options: AddedOption[];
+}
+
+export const ReservationForm = ({
+                                    data,
+                                    errors,
+                                    processing,
+                                    editingReservation,
+                                    onSubmit,
+                                    onValueChange,
+                                    cars,
+                                    clients,
+                                    packs,
+                                    places,
+                                    options,
+                                }: ReservationFormProps) => {
+    return (
+        <form onSubmit={onSubmit} className="grid gap-4">
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <Label htmlFor="flight_number">Flight Number</Label>
+                    <Input
+                        id="flight_number"
+                        type="text"
+                        value={data.flight_number}
+                        onChange={(e) => onValueChange('flight_number', e.target.value)}
+                    />
+                    <InputError message={errors.flight_number} />
+                </div>
+
+                <div>
+                    <Label htmlFor="date_from">Date From</Label>
+                    <Input
+                        id="date_from"
+                        type="date"
+                        value={data.date_from}
+                        onChange={(e) => onValueChange('date_from', e.target.value)}
+                    />
+                    <InputError message={errors.date_from} />
+                </div>
+
+                <div>
+                    <Label htmlFor="date_to">Date To</Label>
+                    <Input
+                        id="date_to"
+                        type="date"
+                        value={data.date_to}
+                        onChange={(e) => onValueChange('date_to', e.target.value)}
+                    />
+                    <InputError message={errors.date_to} />
+                </div>
+
+                {/* Pick-Up Place */}
+                <div>
+                    <Label htmlFor="pick_up_place_id">Pick-Up Place</Label>
+                    <Select
+                        value={data.pick_up_place_id.toString()}
+                        onValueChange={(value) => onValueChange('pick_up_place_id', Number(value))}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a pick-up place" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {places.map((place) => (
+                                <SelectItem key={place.id} value={place.id.toString()}>
+                                    {place.title}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <InputError message={errors.pick_up_place_id} />
+                </div>
+
+                {/* Drop-Off Place */}
+                <div>
+                    <Label htmlFor="drop_off_place_id">Drop-Off Place</Label>
+                    <Select
+                        value={data.drop_off_place_id.toString()}
+                        onValueChange={(value) => onValueChange('drop_off_place_id', Number(value))}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a drop-off place" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {places.map((place) => (
+                                <SelectItem key={place.id} value={place.id.toString()}>
+                                    {place.title}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <InputError message={errors.drop_off_place_id} />
+                </div>
+
+                {/* Car Select */}
+                <div>
+                    <Label htmlFor="car_id">Car</Label>
+                    <Select
+                        value={data.car_id.toString()}
+                        onValueChange={(value) => onValueChange('car_id', Number(value))}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a car" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {cars.map((car) => (
+                                <SelectItem key={car.id} value={car.id.toString()}>
+                                    {car.model}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <InputError message={errors.car_id} />
+                </div>
+
+                {/* Client Select */}
+                <div>
+                    <Label htmlFor="client_id">Client</Label>
+                    <Select
+                        value={data.client_id.toString()}
+                        onValueChange={(value) => onValueChange('client_id', Number(value))}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a client" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {clients.map((client) => (
+                                <SelectItem key={client.id} value={client.id.toString()}>
+                                    {client.full_name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <InputError message={errors.client_id} />
+                </div>
+
+                {/* Pack Select */}
+                <div>
+                    <Label htmlFor="pack_id">Pack</Label>
+                    <Select
+                        value={data.pack_id.toString()}
+                        onValueChange={(value) => onValueChange('pack_id', Number(value))}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a pack" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {packs.map((pack) => (
+                                <SelectItem key={pack.id} value={pack.id.toString()}>
+                                    {pack.title}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <InputError message={errors.pack_id} />
+                </div>
+
+                {/* Options MultiSelect */}
+                <div>
+                    <Label htmlFor="options">Additional Options</Label>
+                    <MultiSelect
+                        selectedValues={options.map((opt) => opt.id.toString())}
+                        onValueChange={(values) => onValueChange('options', values.map(Number))}
+                        options={options.map((opt) => ({ value: opt.id.toString(), label: opt.title }))}
+                    />
+                    <InputError message={errors.options} />
+                </div>
+            </div>
+            <Button type="submit" disabled={processing} className="mt-4">
+                {processing ? <LoaderCircle className="animate-spin" /> : editingReservation ? 'Update Reservation' : 'Add Reservation'}
+            </Button>
+        </form>
+    );
+};

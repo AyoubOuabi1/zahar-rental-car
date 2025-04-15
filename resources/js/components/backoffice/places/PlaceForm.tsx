@@ -1,4 +1,4 @@
-import { FormEventHandler } from 'react';
+import { ChangeEvent, FormEventHandler } from 'react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,7 +42,6 @@ export const PlaceForm = ({
                 <div>
                     <Label htmlFor="title">TITLE</Label>
                     <Input
-                        id="title"
                         type="text"
                         value={data.title}
                         onChange={(e) => onValueChange('title', e.target.value)}
@@ -50,7 +49,6 @@ export const PlaceForm = ({
                     <InputError message={errors.title} />
                 </div>
                 <div>
-                    <Label htmlFor="description">DESCRIPTION</Label>
                     {/* Toolbar for Text Formatting */}
                     {editor && (
                         <div className="mb-2 flex gap-2 border p-2 rounded-md bg-gray-100">
@@ -79,6 +77,7 @@ export const PlaceForm = ({
                     )}
                     {/* Editor */}
                     <div className="border p-2 rounded-md min-h-[150px]">
+                        <Label htmlFor="description">DESCRIPTION</Label>
                         <EditorContent editor={editor} />
                     </div>
                     <InputError message={errors.description} />
