@@ -23,7 +23,6 @@ interface PackFormProps {
 }
 
 export const PackForm = ({ data, errors, processing, editingPack, onSubmit, onValueChange }: PackFormProps) => {
-    const statusOptions = ['true', 'false'];
 
     return (
         <form onSubmit={onSubmit} className="grid gap-4">
@@ -52,11 +51,8 @@ export const PackForm = ({ data, errors, processing, editingPack, onSubmit, onVa
                             <SelectValue placeholder="Activation" />
                         </SelectTrigger>
                         <SelectContent>
-                            {statusOptions.map((status) => (
-                                <SelectItem key={status} value={status}>
-                                    {status}
-                                </SelectItem>
-                            ))}
+                            <SelectItem key="true" value="true">Active</SelectItem>
+                            <SelectItem key="false" value="false">Inactive</SelectItem>
                         </SelectContent>
                     </Select>
                     <InputError message={errors.status} />

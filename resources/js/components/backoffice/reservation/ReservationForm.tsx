@@ -29,18 +29,18 @@ interface ReservationFormProps {
 }
 
 export const ReservationForm = ({
-                                    data,
-                                    errors,
-                                    processing,
-                                    editingReservation,
-                                    onSubmit,
-                                    onValueChange,
-                                    cars,
-                                    clients,
-                                    packs,
-                                    places,
-                                    options,
-                                }: ReservationFormProps) => {
+    data,
+    errors,
+    processing,
+    editingReservation,
+    onSubmit,
+    onValueChange,
+    cars,
+    clients,
+    packs,
+    places,
+    options,
+}: ReservationFormProps) => {
     return (
         <form onSubmit={onSubmit} className="grid gap-4">
             <div className="grid grid-cols-2 gap-4">
@@ -49,7 +49,7 @@ export const ReservationForm = ({
                     <Input
                         id="flight_number"
                         type="text"
-                        value={data.flight_number}
+                        value={data.flight_number || ''}
                         onChange={(e) => onValueChange('flight_number', e.target.value)}
                     />
                     <InputError message={errors.flight_number} />
@@ -77,11 +77,10 @@ export const ReservationForm = ({
                     <InputError message={errors.date_to} />
                 </div>
 
-                {/* Pick-Up Place */}
                 <div>
                     <Label htmlFor="pick_up_place_id">Pick-Up Place</Label>
                     <Select
-                        value={data.pick_up_place_id.toString()}
+                        value={data.pick_up_place_id?.toString() || ''}
                         onValueChange={(value) => onValueChange('pick_up_place_id', Number(value))}
                     >
                         <SelectTrigger>
@@ -98,11 +97,10 @@ export const ReservationForm = ({
                     <InputError message={errors.pick_up_place_id} />
                 </div>
 
-                {/* Drop-Off Place */}
                 <div>
                     <Label htmlFor="drop_off_place_id">Drop-Off Place</Label>
                     <Select
-                        value={data.drop_off_place_id.toString()}
+                        value={data.drop_off_place_id?.toString() || ''}
                         onValueChange={(value) => onValueChange('drop_off_place_id', Number(value))}
                     >
                         <SelectTrigger>
@@ -119,11 +117,10 @@ export const ReservationForm = ({
                     <InputError message={errors.drop_off_place_id} />
                 </div>
 
-                {/* Car Select */}
                 <div>
                     <Label htmlFor="car_id">Car</Label>
                     <Select
-                        value={data.car_id.toString()}
+                        value={data.car_id?.toString() || ''}
                         onValueChange={(value) => onValueChange('car_id', Number(value))}
                     >
                         <SelectTrigger>
@@ -140,11 +137,10 @@ export const ReservationForm = ({
                     <InputError message={errors.car_id} />
                 </div>
 
-                {/* Client Select */}
                 <div>
                     <Label htmlFor="client_id">Client</Label>
                     <Select
-                        value={data.client_id.toString()}
+                        value={data.client_id?.toString() || ''}
                         onValueChange={(value) => onValueChange('client_id', Number(value))}
                     >
                         <SelectTrigger>
@@ -161,11 +157,10 @@ export const ReservationForm = ({
                     <InputError message={errors.client_id} />
                 </div>
 
-                {/* Pack Select */}
                 <div>
                     <Label htmlFor="pack_id">Pack</Label>
                     <Select
-                        value={data.pack_id.toString()}
+                        value={data.pack_id?.toString() || ''}
                         onValueChange={(value) => onValueChange('pack_id', Number(value))}
                     >
                         <SelectTrigger>
@@ -182,17 +177,33 @@ export const ReservationForm = ({
                     <InputError message={errors.pack_id} />
                 </div>
 
-                {/* Options MultiSelect */}
                 <div>
-                    <Label htmlFor="options">Additional Options</Label>
+                    <Label htmlFor="added_options">Additional Options</Label>
                     <MultiSelect
-                        selectedValues={options.map((opt) => opt.id.toString())}
-                        onValueChange={(values) => onValueChange('options', values.map(Number))}
-                        options={options.map((opt) => ({ value: opt.id.toString(), label: opt.title }))}
+                        selectedValues={data.added_options?.map(opt => opt.id.toString()) || []}
+                        onValueChange={(values) => {
+                            const selectedOptions = options
+                                .filter(opt => values.includes(opt.id.toString()))
+                                .map(opt => {
+                                    const existing = data.added_options?.find(o => o.id === opt.id);
+                                    return {
+                                        id: opt.id,
+                                        quantity: existing?.quantity || 1,
+                                        price_per_day: opt.price_per_day,
+                                    };
+                                });
+
+                            onValueChange('added_options', selectedOptions);
+                        }}
+                        options={options.map(opt => ({
+                            value: opt.id.toString(),
+                            label: `${opt.title} ($${opt.price_per_day}/day)`
+                        }))}
                     />
-                    <InputError message={errors.options} />
+                    <InputError message={errors.added_options} />
                 </div>
             </div>
+
             <Button type="submit" disabled={processing} className="mt-4">
                 {processing ? <LoaderCircle className="animate-spin" /> : editingReservation ? 'Update Reservation' : 'Add Reservation'}
             </Button>

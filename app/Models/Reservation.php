@@ -4,106 +4,132 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Reservation extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'client_id',
+        'car_id',
+        'pickup_place_id',
+        'dropoff_place_id',
+        'pack_id',
         'flight_number',
         'date_from',
         'date_to',
-        'pick_up_place_id',
-        'drop_off_place_id',
-        'car_id',
-        'client_id',
+        'total_price',
         'status',
-        'pack_id',
-        'total_price'
     ];
 
     protected $casts = [
         'date_from' => 'datetime',
         'date_to' => 'datetime',
-        'total_price' => 'decimal:2',
     ];
 
-    public function car(): BelongsTo
-    {
-        return $this->belongsTo(Car::class);
-    }
+    // Define status constants for easier reference
+    const STATUS_PENDING = 'pending';
+    const STATUS_CONFIRMED = 'confirmed';
+    const STATUS_ACTIVE = 'active';
+    const STATUS_COMPLETED = 'completed';
+    const STATUS_CANCELLED = 'cancelled';
 
-    public function client(): BelongsTo
+    public function client()
     {
         return $this->belongsTo(Client::class);
     }
 
-    public function pack(): BelongsTo
+    public function car()
     {
-        return $this->belongsTo(Pack::class)->withDefault([
-            'title' => 'No Pack',
-            'price_per_day' => 0
-        ]);
+        return $this->belongsTo(Car::class);
     }
 
-    public function pickUpPlace(): BelongsTo
+    public function pickupPlace()
     {
-        return $this->belongsTo(Place::class, 'pick_up_place_id');
+        return $this->belongsTo(Place::class, 'pickup_place_id');
     }
 
-    public function dropOffPlace(): BelongsTo
+    public function dropoffPlace()
     {
-        return $this->belongsTo(Place::class, 'drop_off_place_id');
+        return $this->belongsTo(Place::class, 'dropoff_place_id');
     }
 
-    public function addedOptions(): BelongsToMany
+    public function pack()
     {
-        return $this->belongsToMany(AddedOption::class)
-            ->withPivot([
-                'quantity',
-                'price_per_day',
-                'created_at',
-                'updated_at'
-            ])
-            ->using(ReservationAddedOption::class);
+        return $this->belongsTo(Pack::class);
     }
 
-    public function calculateDuration(): int
+    public function addedOptions()
     {
-        return $this->date_from->diffInDays($this->date_to);
+        return $this->belongsToMany(AddedOption::class, 'reservation_added_option')
+            ->withPivot('quantity', 'price_at_reservation')
+            ->withTimestamps();
     }
 
-    public function calculateTotalPrice(): void
+    // Method to calculate total days
+    public function getTotalDaysAttribute()
     {
-        $days = $this->calculateDuration();
-
-        $basePrice = $this->car->price_per_day * $days;
-        $packPrice = $this->pack ? $this->pack->price_per_day * $days : 0;
-
-        $optionsPrice = $this->addedOptions->sum(
-            fn($option) => $option->pivot->price_per_day * $option->pivot->quantity * $days
-        );
-
-        $this->total_price = $basePrice + $packPrice + $optionsPrice;
-        $this->save();
+        return $this->date_from->diffInDays($this->date_to) + 1; // +1 because rental includes both start and end day
     }
 
+    // Method to calculate reservation total
+    public function calculateTotal()
+    {
+        $carPrice = $this->car->price * $this->total_days;
+        $packPrice = $this->pack ? $this->pack->price : 0;
+
+        $optionsTotal = 0;
+        foreach ($this->addedOptions as $option) {
+            $optionsTotal += $option->pivot->price_at_reservation * $option->pivot->quantity;
+        }
+
+        return $carPrice + $packPrice + $optionsTotal;
+    }
+
+    // Helper method to check if a car is available for booking
+    public static function isCarAvailable($carId, $dateFrom, $dateTo, $excludeReservationId = null)
+    {
+        $query = self::where('car_id', $carId)
+            ->where('status', '!=', self::STATUS_CANCELLED)
+            ->where(function ($query) use ($dateFrom, $dateTo) {
+                // Check if there's any overlap with existing reservations
+                $query->where(function ($q) use ($dateFrom, $dateTo) {
+                    $q->where('date_from', '<=', $dateFrom)
+                        ->where('date_to', '>=', $dateFrom);
+                })->orWhere(function ($q) use ($dateFrom, $dateTo) {
+                    $q->where('date_from', '<=', $dateTo)
+                        ->where('date_to', '>=', $dateTo);
+                })->orWhere(function ($q) use ($dateFrom, $dateTo) {
+                    $q->where('date_from', '>=', $dateFrom)
+                        ->where('date_to', '<=', $dateTo);
+                });
+            });
+
+        // Exclude current reservation when checking for updates
+        if ($excludeReservationId) {
+            $query->where('id', '!=', $excludeReservationId);
+        }
+
+        return $query->count() === 0;
+    }
+
+    // Scope to filter reservations by status
+    public function scopeWithStatus($query, $status)
+    {
+        return $query->where('status', $status);
+    }
+
+    // Scope to get current active reservations
     public function scopeActive($query)
     {
-        return $query->whereIn('status', ['pending', 'confirmed']);
+        return $query->where('status', self::STATUS_ACTIVE);
     }
 
-    public function scopeBetweenDates($query, $from, $to)
+    // Scope to get upcoming reservations
+    public function scopeUpcoming($query)
     {
-        return $query->where(function($q) use ($from, $to) {
-            $q->whereBetween('date_from', [$from, $to])
-                ->orWhereBetween('date_to', [$from, $to])
-                ->orWhere(function($q) use ($from, $to) {
-                    $q->where('date_from', '<', $from)
-                        ->where('date_to', '>', $to);
-                });
-        });
+        $today = now()->startOfDay();
+        return $query->where('date_from', '>=', $today)
+            ->where('status', '!=', self::STATUS_CANCELLED);
     }
 }

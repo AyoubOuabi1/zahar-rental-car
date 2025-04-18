@@ -34,14 +34,20 @@ class PackController extends Controller
         $request->validate([
             'title' => 'required|string|unique:packs',
             'description' => 'required|string',
-            'status' => 'required',
             'price_per_day' => 'required|numeric',
+            'status' => 'required|in:true,false',
         ]);
 
-        $pack = Pack::create($request->all());
+        $data = $request->all();
+
+        // Convert string 'true'/'false' to boolean (or 1/0 for DB)
+        $data['status'] = filter_var($data['status'], FILTER_VALIDATE_BOOLEAN);
+
+        Pack::create($data);
 
         return redirect()->route('packs.index')->with('success', 'Pack created successfully.');
     }
+
 
     public function show(Pack $pack)
     {
@@ -55,7 +61,6 @@ class PackController extends Controller
         $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
-            'status' => 'required',
             'price_per_day' => 'required|numeric',
         ]);
 

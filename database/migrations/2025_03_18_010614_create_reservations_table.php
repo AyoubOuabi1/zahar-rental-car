@@ -9,25 +9,25 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    // In the create_reservations_table migration file
+    public function up()
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('client_id')->constrained('clients');
+            $table->foreignId('car_id')->constrained('cars');
+            $table->foreignId('pickup_place_id')->constrained('places');
+            $table->foreignId('dropoff_place_id')->constrained('places');
+            $table->foreignId('pack_id')->nullable()->constrained('packs');
             $table->string('flight_number')->nullable();
-            $table->date('date_from');
-            $table->date('date_to');
-            $table->foreignId('pick_up_place_id')->constrained('places')->onDelete('cascade');
-            $table->foreignId('drop_off_place_id')->constrained('places')->onDelete('cascade');
-            $table->foreignId('car_id')->constrained()->onDelete('cascade');
-            $table->foreignId('client_id')->constrained()->onDelete('cascade');
-            $table->string('status')->default('Pending');
-            $table->foreignId('pack_id')->nullable()->constrained()->onDelete('set null');
-            $table->decimal('total_price', 8, 2);
+            $table->dateTime('date_from');
+            $table->dateTime('date_to');
+            $table->decimal('total_price', 10, 2);
+            $table->enum('status', ['pending', 'confirmed', 'active', 'completed', 'cancelled'])->default('pending');
             $table->timestamps();
         });
     }
-
-    /**
+        /**
      * Reverse the migrations.
      */
     public function down(): void

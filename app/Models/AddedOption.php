@@ -15,7 +15,8 @@ class AddedOption extends Model
 
     public function reservations()
     {
-        return $this->belongsToMany(Reservation::class, 'reservation_options')
-            ->withPivot('quantity', 'price');
+        return $this->belongsToMany(Reservation::class, 'reservation_added_option')
+            ->withPivot('quantity', 'price_at_reservation')
+            ->withTimestamps();
     }
 }

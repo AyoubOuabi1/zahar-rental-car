@@ -13,13 +13,11 @@ return new class extends Migration
     {
         Schema::create('reservation_added_option', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('reservation_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('added_option_id')->constrained()->cascadeOnDelete();
-            $table->unsignedInteger('quantity')->default(1);
-            $table->decimal('price_per_day', 8, 2);
+            $table->foreignId('reservation_id')->constrained('reservations')->onDelete('cascade');
+            $table->foreignId('added_option_id')->constrained('added_options');
+            $table->integer('quantity')->default(1);
+            $table->decimal('price_at_reservation', 10, 2); // Storing the price at time of reservation
             $table->timestamps();
-
-            $table->unique(['reservation_id', 'added_option_id']);
         });
     }
 
