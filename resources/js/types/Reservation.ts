@@ -3,8 +3,8 @@ export interface Reservation {
     flight_number?: string | null;
     date_from: string;
     date_to: string;
-    pick_up_place_id: number;
-    drop_off_place_id: number;
+    pickup_place_id: number;
+    dropoff_place_id: number;
     car_id: number;
     client_id: number;
     pack_id?: number | null;

@@ -78,10 +78,10 @@ export const ReservationForm = ({
                 </div>
 
                 <div>
-                    <Label htmlFor="pick_up_place_id">Pick-Up Place</Label>
+                    <Label htmlFor="pickup_place_id">Pick-Up Place</Label>
                     <Select
-                        value={data.pick_up_place_id?.toString() || ''}
-                        onValueChange={(value) => onValueChange('pick_up_place_id', Number(value))}
+                        value={data.pickup_place_id?.toString() || ''}
+                        onValueChange={(value) => onValueChange('pickup_place_id', Number(value))}
                     >
                         <SelectTrigger>
                             <SelectValue placeholder="Select a pick-up place" />
@@ -94,14 +94,14 @@ export const ReservationForm = ({
                             ))}
                         </SelectContent>
                     </Select>
-                    <InputError message={errors.pick_up_place_id} />
+                    <InputError message={errors.pickup_place_id} />
                 </div>
 
                 <div>
-                    <Label htmlFor="drop_off_place_id">Drop-Off Place</Label>
+                    <Label htmlFor="dropoff_place_id">Drop-Off Place</Label>
                     <Select
-                        value={data.drop_off_place_id?.toString() || ''}
-                        onValueChange={(value) => onValueChange('drop_off_place_id', Number(value))}
+                        value={data.dropoff_place_id?.toString() || ''}
+                        onValueChange={(value) => onValueChange('dropoff_place_id', Number(value))}
                     >
                         <SelectTrigger>
                             <SelectValue placeholder="Select a drop-off place" />
@@ -114,7 +114,7 @@ export const ReservationForm = ({
                             ))}
                         </SelectContent>
                     </Select>
-                    <InputError message={errors.drop_off_place_id} />
+                    <InputError message={errors.dropoff_place_id} />
                 </div>
 
                 <div>

@@ -12,6 +12,7 @@ use App\Models\Place;
 use App\Models\Pack;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use function Psy\debug;
 
 class ReservationController extends Controller
 {
@@ -48,6 +49,11 @@ class ReservationController extends Controller
 
         return Inertia::render('reservations/index', [
             'reservations' => $reservations,
+            'cars' => Car::all(),
+            'clients' => Client::all(),
+            'places' => Place::all(),
+            'packs' => Pack::all(),
+            'options' => AddedOption::all(),
             'search' => $search,
             'status' => $status,
             'date_from' => $dateFrom,
@@ -60,6 +66,7 @@ class ReservationController extends Controller
                 Reservation::STATUS_CANCELLED,
             ],
         ]);
+
     }
 
     public function create()
@@ -97,7 +104,6 @@ class ReservationController extends Controller
             'added_options.*.id' => 'exists:added_options,id',
             'added_options.*.quantity' => 'required|integer|min:1',
         ]);
-
         // Check if the car is available for the selected dates
         if (!Reservation::isCarAvailable($validated['car_id'], $validated['date_from'], $validated['date_to'])) {
             return back()->withErrors([
@@ -130,7 +136,7 @@ class ReservationController extends Controller
                     $option = AddedOption::find($optionData['id']);
                     $reservation->addedOptions()->attach($option->id, [
                         'quantity' => $optionData['quantity'],
-                        'price_at_reservation' => $option->price,
+                        'price_at_reservation' => $option->price_per_day,
                     ]);
                 }
             }
