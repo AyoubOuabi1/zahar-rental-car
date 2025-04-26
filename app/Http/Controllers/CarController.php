@@ -27,6 +27,7 @@ class CarController extends Controller
     {
         $request->validate([
             'brand' => 'required|string',
+            'matriculation' => 'required|string',
             'model' => 'required|string',
             'category' => 'required|string',
             'fuel' => 'required|string',
@@ -50,6 +51,7 @@ class CarController extends Controller
     {
         $request->validate([
             'brand' => 'required|string',
+            'matriculation' => 'required|string',
             'model' => 'required|string',
             'category' => 'required|string',
             'fuel' => 'required|string',

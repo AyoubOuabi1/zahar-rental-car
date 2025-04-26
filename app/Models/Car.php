@@ -9,7 +9,7 @@ class Car extends Model
     use HasFactory;
 
     protected $fillable = [
-        'brand', 'model', 'category', 'fuel', 'transmission',
+        'brand', 'matriculation','model', 'category', 'fuel', 'transmission',
         'luggage', 'seats', 'ac', 'doors', 'image', 'discount', 'price_per_day'
     ];
     public function reservations()
@@ -19,7 +19,7 @@ class Car extends Model
 
     // Add casts for boolean fields
     protected $casts = [
-        'ac' => 'boolean',
+        'aca' => 'boolean',
         'price_per_day' => 'decimal:2',
         'discount' => 'decimal:2'
     ];

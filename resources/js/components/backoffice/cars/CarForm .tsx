@@ -24,7 +24,7 @@ export const CarForm = ({ data, errors, processing, editingCar, onSubmit, onValu
     return (
         <form onSubmit={onSubmit} className="grid gap-4">
             <div className="grid grid-cols-2 gap-4">
-                {['brand', 'model', 'category', 'image', 'discount', 'price_per_day'].map((field) => (
+                {['brand', 'model', 'matriculation','category', 'image', 'discount', 'price_per_day'].map((field) => (
                     <div key={field}>
                         <Label htmlFor={field}>{field.replace('_', ' ').toUpperCase()}</Label>
                         <Input

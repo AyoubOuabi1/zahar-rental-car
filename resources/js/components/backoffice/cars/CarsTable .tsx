@@ -30,7 +30,6 @@ import {
     AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 
 interface CarsTableProps {
     cars: Car[];
@@ -63,6 +62,10 @@ export const CarsTable = ({ cars, onEdit, onDelete }: CarsTableProps) => {
                     />
                 </div>
             ),
+        },
+        {
+            accessorKey: "matriculation",
+            header: "Matriculation",
         },
         {
             accessorKey: "brand",
@@ -151,15 +154,6 @@ export const CarsTable = ({ cars, onEdit, onDelete }: CarsTableProps) => {
 
     return (
         <>
-            {/* Search Input
-            <div className="flex items-center justify-between mb-4">
-                <Input
-                    placeholder="Search cars..."
-                    value={globalFilter}
-                    onChange={(e) => setGlobalFilter(e.target.value)}
-                    className="max-w-sm"
-                />
-            </div>*/}
 
             {/* Table */}
             <div className="rounded-md border">

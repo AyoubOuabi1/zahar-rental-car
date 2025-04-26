@@ -27,7 +27,6 @@ class Reservation extends Model
         'date_to' => 'datetime',
     ];
 
-    // Define status constants for easier reference
     const STATUS_PENDING = 'pending';
     const STATUS_CONFIRMED = 'confirmed';
     const STATUS_ACTIVE = 'active';
@@ -66,27 +65,27 @@ class Reservation extends Model
             ->withTimestamps();
     }
 
-    // Method to calculate total days
     public function getTotalDaysAttribute()
     {
-        return $this->date_from->diffInDays($this->date_to) + 1; // +1 because rental includes both start and end day
+        return $this->date_from->diffInDays($this->date_to) + 1;
     }
 
-    // Method to calculate reservation total
     public function calculateTotal()
     {
-        $carPrice = $this->car->price * $this->total_days;
-        $packPrice = $this->pack ? $this->pack->price : 0;
+        $days = $this->total_days;
+
+        $carPrice = $this->car->price_per_day * $days;
+
+        $packPrice = $this->pack ? $this->pack->price_per_day * $days : 0;
 
         $optionsTotal = 0;
         foreach ($this->addedOptions as $option) {
-            $optionsTotal += $option->pivot->price_at_reservation * $option->pivot->quantity;
+            $optionsTotal += $option->pivot->price_at_reservation * $option->pivot->quantity * $days;
         }
 
         return $carPrice + $packPrice + $optionsTotal;
     }
 
-    // Helper method to check if a car is available for booking
     public static function isCarAvailable($carId, $dateFrom, $dateTo, $excludeReservationId = null)
     {
         $query = self::where('car_id', $carId)
@@ -105,7 +104,6 @@ class Reservation extends Model
                 });
             });
 
-        // Exclude current reservation when checking for updates
         if ($excludeReservationId) {
             $query->where('id', '!=', $excludeReservationId);
         }
@@ -113,19 +111,16 @@ class Reservation extends Model
         return $query->count() === 0;
     }
 
-    // Scope to filter reservations by status
     public function scopeWithStatus($query, $status)
     {
         return $query->where('status', $status);
     }
 
-    // Scope to get current active reservations
     public function scopeActive($query)
     {
         return $query->where('status', self::STATUS_ACTIVE);
     }
 
-    // Scope to get upcoming reservations
     public function scopeUpcoming($query)
     {
         $today = now()->startOfDay();

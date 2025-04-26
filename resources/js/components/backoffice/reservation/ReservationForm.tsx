@@ -60,10 +60,21 @@ export const ReservationForm = ({
                     <Input
                         id="date_from"
                         type="date"
-                        value={data.date_from}
+                        value={data.date_from || ''}
                         onChange={(e) => onValueChange('date_from', e.target.value)}
                     />
                     <InputError message={errors.date_from} />
+                </div>
+
+                <div>
+                    <Label htmlFor="time_from">Time From</Label>
+                    <Input
+                        id="time_from"
+                        type="time"
+                        value={data.time_from || ''}
+                        onChange={(e) => onValueChange('time_from', e.target.value)}
+                    />
+                    <InputError message={errors.time_from} />
                 </div>
 
                 <div>
@@ -71,10 +82,21 @@ export const ReservationForm = ({
                     <Input
                         id="date_to"
                         type="date"
-                        value={data.date_to}
+                        value={data.date_to || ''}
                         onChange={(e) => onValueChange('date_to', e.target.value)}
                     />
                     <InputError message={errors.date_to} />
+                </div>
+
+                <div>
+                    <Label htmlFor="time_to">Time To</Label>
+                    <Input
+                        id="time_to"
+                        type="time"
+                        value={data.time_to || ''}
+                        onChange={(e) => onValueChange('time_to', e.target.value)}
+                    />
+                    <InputError message={errors.time_to} />
                 </div>
 
                 <div>

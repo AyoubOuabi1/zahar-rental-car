@@ -87,7 +87,6 @@ class ReservationController extends Controller
         ]);
     }
 
-    // Store a new reservation
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -98,23 +97,27 @@ class ReservationController extends Controller
             'pack_id' => 'nullable|exists:packs,id',
             'flight_number' => 'nullable|string|max:50',
             'date_from' => 'required|date',
+            'time_from' => 'required|date_format:H:i',
             'date_to' => 'required|date|after_or_equal:date_from',
+            'time_to' => 'required|date_format:H:i',
             'status' => 'nullable|in:pending,confirmed,active,completed,cancelled',
             'added_options' => 'nullable|array',
             'added_options.*.id' => 'exists:added_options,id',
             'added_options.*.quantity' => 'required|integer|min:1',
         ]);
-        // Check if the car is available for the selected dates
-        if (!Reservation::isCarAvailable($validated['car_id'], $validated['date_from'], $validated['date_to'])) {
+
+        $datetimeFrom = $validated['date_from'] . ' ' . $validated['time_from'] . ':00';
+        $datetimeTo = $validated['date_to'] . ' ' . $validated['time_to'] . ':00';
+
+        if (!Reservation::isCarAvailable($validated['car_id'], $datetimeFrom, $datetimeTo)) {
             return back()->withErrors([
-                'car_id' => 'The selected car is not available for the specified date range.',
+                'car_id' => 'The selected car is not available for the specified date and time range.',
             ])->withInput();
         }
 
         DB::beginTransaction();
 
         try {
-            // Create the reservation
             $reservation = new Reservation([
                 'client_id' => $validated['client_id'],
                 'car_id' => $validated['car_id'],
@@ -122,15 +125,14 @@ class ReservationController extends Controller
                 'dropoff_place_id' => $validated['dropoff_place_id'],
                 'pack_id' => $validated['pack_id'] ?? null,
                 'flight_number' => $validated['flight_number'] ?? null,
-                'date_from' => $validated['date_from'],
-                'date_to' => $validated['date_to'],
+                'date_from' => $datetimeFrom,
+                'date_to' => $datetimeTo,
                 'status' => $validated['status'] ?? Reservation::STATUS_PENDING,
-                'total_price' => 0, // Placeholder, will calculate below
+                'total_price' => 0,
             ]);
 
             $reservation->save();
 
-            // Attach added options with quantity and prices
             if (!empty($validated['added_options'])) {
                 foreach ($validated['added_options'] as $optionData) {
                     $option = AddedOption::find($optionData['id']);
@@ -141,7 +143,6 @@ class ReservationController extends Controller
                 }
             }
 
-            // Calculate and update total price
             $reservation->total_price = $reservation->calculateTotal();
             $reservation->save();
 
@@ -155,6 +156,7 @@ class ReservationController extends Controller
             ])->withInput();
         }
     }
+
 
     public function show(Reservation $reservation)
     {

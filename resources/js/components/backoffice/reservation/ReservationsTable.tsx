@@ -9,9 +9,10 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Edit, Trash } from "lucide-react";
+import { Download, Edit, Trash } from 'lucide-react';
 
 import { Reservation, Car, Client } from '@/types/Reservation';
+import { router } from '@inertiajs/react';
 
 interface ReservationsTableProps {
     reservations: Reservation[];
@@ -22,6 +23,18 @@ interface ReservationsTableProps {
 }
 
 export function ReservationsTable({ reservations, cars, clients, onEdit, onDelete }: ReservationsTableProps) {
+    function formatDate(datetime: string) {
+        if (!datetime) return '';
+        const date = new Date(datetime);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
     return (
         <Table>
             <TableHeader>
@@ -40,14 +53,20 @@ export function ReservationsTable({ reservations, cars, clients, onEdit, onDelet
                         <TableCell>{reservation.flight_number}</TableCell>
                         <TableCell>{clients.find(client => client.id === reservation.client_id)?.full_name}</TableCell>
                         <TableCell>{cars.find(car => car.id === reservation.car_id)?.model}</TableCell>
-                        <TableCell>{reservation.date_from}</TableCell>
-                        <TableCell>{reservation.date_to}</TableCell>
+                        <TableCell>{formatDate(reservation.date_from)}</TableCell>
+                        <TableCell>{formatDate(reservation.date_to)}</TableCell>
                         <TableCell>
                             <Button variant="outline" size="icon" onClick={() => onEdit(reservation)}>
                                 <Edit className="w-4 h-4" />
                             </Button>
                             <Button variant="destructive" size="icon" onClick={() => onDelete(reservation.id)}>
                                 <Trash className="w-4 h-4" />
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => router.get(`/reservations/${reservation.id}/contract`)}>
+                                <Download className="w-4 h-4" />
                             </Button>
                         </TableCell>
                     </TableRow>

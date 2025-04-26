@@ -38,34 +38,34 @@ export default function ReservationForm() {
             <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
                     <Label htmlFor="pickup-date" className="flex items-center mb-2 text-gray-700">
-                        <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+                        <Calendar className="bg-white w-5 h-5 mr-2 text-blue-600" />
                         Date de collecte
                     </Label>
-                    <Input id="pickup-date" type="date" className="p-3 border border-gray-300 rounded-md w-full" />
+                    <Input id="pickup-date" type="date" className="bg-white p-3 border border-gray-300 rounded-md w-full" />
                 </div>
                 <div>
                     <Label htmlFor="pickup-time" className="flex items-center mb-2 text-gray-700">
-                        <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+                        <Calendar className="bg-white w-5 h-5 mr-2 text-blue-600" />
                         Heure de collecte
                     </Label>
-                    <Input id="pickup-time" type="time" className="p-3 border border-gray-300 rounded-md w-full" />
+                    <Input id="pickup-time" type="time" className="bg-white p-3 border border-gray-300 rounded-md w-full" />
                 </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
                     <Label htmlFor="return-date" className="flex items-center mb-2 text-gray-700">
-                        <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+                        <Calendar className="bg-white w-5 h-5 mr-2 text-blue-600" />
                         Date de retour
                     </Label>
-                    <Input id="return-date" type="date" className="p-3 border border-gray-300 rounded-md w-full" />
+                    <Input id="return-date" type="date" className="bg-white p-3 border border-gray-300 rounded-md w-full" />
                 </div>
                 <div>
                     <Label htmlFor="return-time" className="flex items-center mb-2 text-gray-700">
-                        <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+                        <Calendar className="bg-white w-5 h-5 mr-2 text-blue-600" />
                         Heure de retour
                     </Label>
-                    <Input id="return-time" type="time" className="p-3 border border-gray-300 rounded-md w-full" />
+                    <Input id="return-time" type="time" className="bg-white p-3 border border-gray-300 rounded-md w-full" />
                 </div>
             </div>
 

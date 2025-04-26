@@ -1,6 +1,7 @@
 export interface Car {
     id: number;
     brand: string;
+    matriculation: string;
     model: string;
     category: string;
     fuel: string;

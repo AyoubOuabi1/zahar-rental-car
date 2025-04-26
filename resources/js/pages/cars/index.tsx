@@ -22,6 +22,7 @@ export default function CarsManagement() {
 
     const { data, setData, post, put, delete: destroy, processing, errors, reset } = useForm<Car>({
         brand: '',
+        matriculation: '',
         model: '',
         category: '',
         fuel: '',
