@@ -16,7 +16,6 @@ use function Psy\debug;
 
 class ReservationController extends Controller
 {
-    // List all reservations
     public function index(Request $request)
     {
         $search = $request->query('search');
@@ -25,26 +24,7 @@ class ReservationController extends Controller
         $dateTo = $request->query('date_to');
 
         $reservations = Reservation::query()
-            ->with(['client', 'car', 'pickupPlace', 'dropoffPlace', 'pack'])
-            ->when($search, function ($query, $search) {
-                return $query->whereHas('client', function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%");
-                })->orWhereHas('car', function ($q) use ($search) {
-                    $q->where('brand', 'like', "%{$search}%")
-                        ->orWhere('model', 'like', "%{$search}%")
-                        ->orWhere('plate_number', 'like', "%{$search}%");
-                });
-            })
-            ->when($status, function ($query, $status) {
-                return $query->where('status', $status);
-            })
-            ->when($dateFrom, function ($query, $dateFrom) {
-                return $query->where('date_from', '>=', $dateFrom);
-            })
-            ->when($dateTo, function ($query, $dateTo) {
-                return $query->where('date_to', '<=', $dateTo);
-            })
-            ->latest()
+            ->with(['client', 'car', 'pickupPlace', 'dropoffPlace', 'pack', 'addedOptions'])
             ->get();
 
         return Inertia::render('reservations/index', [

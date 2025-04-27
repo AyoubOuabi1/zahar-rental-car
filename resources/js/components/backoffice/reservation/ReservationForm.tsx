@@ -18,7 +18,6 @@ interface ReservationFormProps {
     data: Reservation;
     errors: Record<string, string>;
     processing: boolean;
-    editingReservation: Reservation | null;
     onSubmit: FormEventHandler;
     onValueChange: (field: keyof Reservation, value: any) => void;
     cars: Car[];
@@ -32,7 +31,6 @@ export const ReservationForm = ({
     data,
     errors,
     processing,
-    editingReservation,
     onSubmit,
     onValueChange,
     cars,
@@ -227,7 +225,7 @@ export const ReservationForm = ({
             </div>
 
             <Button type="submit" disabled={processing} className="mt-4">
-                {processing ? <LoaderCircle className="animate-spin" /> : editingReservation ? 'Update Reservation' : 'Add Reservation'}
+                {processing ? <LoaderCircle className="animate-spin" /> :  'Add Reservation'}
             </Button>
         </form>
     );

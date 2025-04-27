@@ -29,7 +29,7 @@ export default function index() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState(search || '');
 
-    const { data, setData, post, put, delete: destroy, processing, errors, reset } = useForm<Reservation>({
+    const { data, setData, post, delete: destroy, processing, errors, reset } = useForm<Reservation>({
         flight_number: '',
         date_from: '',
         date_to: '',
@@ -43,16 +43,7 @@ export default function index() {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        editingReservation
-            ? put(route('reservations.update', editingReservation.id), {
-                data,
-                onSuccess: () => {
-                    reset();
-                    setIsDialogOpen(false);
-                    toast('Reservation updated successfully.');
-                },
-            })
-            : post(route('reservations.store'), {
+        post(route('reservations.store'), {
                 data,
                 onSuccess: () => {
                     reset();
@@ -62,11 +53,7 @@ export default function index() {
             });
     };
 
-    const handleEdit = (reservation: Reservation) => {
-        setEditingReservation(reservation);
-        setData(reservation);
-        setIsDialogOpen(true);
-    };
+
 
     const handleDelete = (id: number | undefined) => {
         if (id) {
@@ -87,7 +74,7 @@ export default function index() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Reservations Management" />
             <div className="container mx-auto p-4">
-                <h1 className="text-2xl font-bold mb-4">Reservations Management</h1>
+                <h1 className="mb-4 text-2xl font-bold">Reservations Management</h1>
 
                 {/* Search Bar */}
                 <form onSubmit={handleSearch} className="mb-4 flex items-center gap-2">
@@ -99,20 +86,23 @@ export default function index() {
                         className="flex-1"
                     />
                     <Button type="submit">
-                        <Search className="w-4 h-4 mr-2" /> Search
+                        <Search className="mr-2 h-4 w-4" /> Search
                     </Button>
                 </form>
 
-                <Dialog open={isDialogOpen} onOpenChange={(open) => {
-                    if (!open) {
-                        reset();
-                        setEditingReservation(null);
-                    }
-                    setIsDialogOpen(open);
-                }}>
+                <Dialog
+                    open={isDialogOpen}
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            reset();
+                            setEditingReservation(null);
+                        }
+                        setIsDialogOpen(open);
+                    }}
+                >
                     <DialogTrigger asChild>
                         <Button className="mb-4">
-                            <Plus className="w-4 h-4 mr-2" /> Add Reservation
+                            <Plus className="mr-2 h-4 w-4" /> Add Reservation
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
@@ -126,7 +116,6 @@ export default function index() {
                             data={data}
                             errors={errors}
                             processing={processing}
-                            editingReservation={editingReservation}
                             onSubmit={submit}
                             onValueChange={(field, value) => setData(field, value)}
                             cars={cars}
@@ -139,7 +128,7 @@ export default function index() {
                 </Dialog>
 
                 {/* Reservations Table */}
-                <ReservationsTable reservations={reservations} cars={cars} clients={clients} onEdit={handleEdit} onDelete={handleDelete} />
+                <ReservationsTable reservations={reservations} cars={cars} clients={clients} places={places} onDelete={handleDelete} options={options} />
             </div>
         </AppLayout>
     );
