@@ -14,37 +14,37 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Cars',
-        href: '/cars',
+        href: '/dashboard/cars',
         icon: Car,
     },
     {
         title: 'Clients',
-        href: '/clients',
+        href: '/dashboard/clients',
         icon: Users,
     },
     {
         title: 'Reservations',
-        href: '/reservations',
+        href: '/dashboard/reservations',
         icon: Calendar,
     },
     {
         title: 'Packs',
-        href: '/packs',
+        href: '/dashboard/packs',
         icon: Package,
     },
     {
         title: 'Pack Items',
-        href: '/packitems',
+        href: '/dashboard/packitems',
         icon: Settings,
     },
     {
         title: 'Added Options',
-        href: '/added-options',
+        href: '/dashboard/added-options',
         icon: Settings,
     },
     {
         title: 'Places',
-        href: '/places',
+        href: '/dashboard/places',
         icon: MapPin,
     },
 ];

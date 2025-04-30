@@ -11,7 +11,7 @@ import { PacksTable } from '@/components/backoffice/packs/PacksTable';
 import { Pack } from '@/types/Pack';
 
 const breadcrumbs = [
-    { title: 'Packs', href: '/packs' },
+    { title: 'Packs', href: 'dashboard/packs' },
 ];
 
 export default function PacksManagement() {
@@ -30,7 +30,7 @@ export default function PacksManagement() {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         editingPack
-            ? put(route('packs.update', editingPack.id), {
+            ? put(route('dashboard.packs.update', editingPack.id), {
                 data,
                 onSuccess: () => {
                     reset();
@@ -38,7 +38,7 @@ export default function PacksManagement() {
                     toast('Pack updated successfully.');
                 },
             })
-            : post(route('packs.store'), {
+            : post(route('dashboard.packs.store'), {
                 data,
                 onSuccess: () => {
                     reset();
@@ -56,7 +56,7 @@ export default function PacksManagement() {
 
     const handleDelete = (id: number | undefined) => {
         if (id) {
-            destroy(route('packs.destroy', id), {
+            destroy(route('dashboard.packs.destroy', id), {
                 onSuccess: () => {
                     toast('Pack deleted successfully.');
                 },

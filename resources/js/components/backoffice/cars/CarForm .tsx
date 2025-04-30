@@ -37,7 +37,7 @@ export const CarForm = ({ data, errors, processing, editingCar, onSubmit, onValu
                     </div>
                 ))}
 
-                {/* Fuel Type Select */}
+
                 <div>
                     <Label htmlFor="fuel">Fuel Type</Label>
                     <Select value={data.fuel} onValueChange={(value) => onValueChange('fuel', value)}>
@@ -53,7 +53,7 @@ export const CarForm = ({ data, errors, processing, editingCar, onSubmit, onValu
                     <InputError message={errors.fuel} />
                 </div>
 
-                {/* Transmission Select */}
+
                 <div>
                     <Label htmlFor="transmission">Transmission</Label>
                     <Select value={data.transmission} onValueChange={(value) => onValueChange('transmission', value)}>
@@ -69,7 +69,7 @@ export const CarForm = ({ data, errors, processing, editingCar, onSubmit, onValu
                     <InputError message={errors.transmission} />
                 </div>
 
-                {/* Seats Input */}
+
                 <div>
                     <Label htmlFor="seats">Seats</Label>
                     <Input
@@ -77,12 +77,12 @@ export const CarForm = ({ data, errors, processing, editingCar, onSubmit, onValu
                         type="number"
                         value={data.seats}
                         onChange={(e) => onValueChange('seats', parseInt(e.target.value))}
-                        min={1} // Ensure seats cannot be less than 1
+                        min={1}
                     />
                     <InputError message={errors.seats} />
                 </div>
 
-                {/* Doors Input */}
+
                 <div>
                     <Label htmlFor="doors">Doors</Label>
                     <Input
@@ -90,12 +90,12 @@ export const CarForm = ({ data, errors, processing, editingCar, onSubmit, onValu
                         type="number"
                         value={data.doors}
                         onChange={(e) => onValueChange('doors', parseInt(e.target.value))}
-                        min={1} // Ensure doors cannot be less than 1
+                        min={1}
                     />
                     <InputError message={errors.doors} />
                 </div>
 
-                {/* Luggage Input */}
+
                 <div>
                     <Label htmlFor="luggage">Luggage</Label>
                     <Input
@@ -103,12 +103,12 @@ export const CarForm = ({ data, errors, processing, editingCar, onSubmit, onValu
                         type="number"
                         value={data.luggage}
                         onChange={(e) => onValueChange('luggage', parseInt(e.target.value))}
-                        min={0} // Ensure luggage cannot be negative
+                        min={0}
                     />
                     <InputError message={errors.luggage} />
                 </div>
 
-                {/* Air Conditioning Switch */}
+
                 <div className="flex items-center space-x-2">
                     <Switch
                         id="ac"

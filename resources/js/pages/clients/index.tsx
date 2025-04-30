@@ -11,7 +11,7 @@ import { ClientForm } from '@/components/backoffice/clients/ClientForm';
 import { ClientsTable } from '@/components/backoffice/clients/ClientsTable';
 
 const breadcrumbs = [
-    { title: 'Clients', href: '/clients' },
+    { title: 'Clients', href: 'dashboard/clients' },
 ];
 
 export default function ClientsManagement() {
@@ -32,7 +32,7 @@ export default function ClientsManagement() {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         editingClient
-            ? put(route('clients.update', editingClient.id), {
+            ? put(route('dashboard.clients.update', editingClient.id), {
                 data,
                 onSuccess: () => {
                     reset();
@@ -40,7 +40,7 @@ export default function ClientsManagement() {
                     toast('Client updated successfully.');
                 },
             })
-            : post(route('clients.store'), {
+            : post(route('dashboard.clients.store'), {
                 data,
                 onSuccess: () => {
                     reset();
@@ -58,7 +58,7 @@ export default function ClientsManagement() {
 
     const handleDelete = (id: number | undefined) => {
         if (id) {
-            destroy(route('clients.destroy', id), {
+            destroy(route('dashboard.clients.destroy', id), {
                 onSuccess: () => {
                     toast('Client deleted successfully.');
                 },

@@ -11,7 +11,7 @@ import { AddedOptionsTable } from '@/components/backoffice/added-options/AddedOp
 import { AddedOptionForm } from '@/components/backoffice/added-options/AddedOptionForm';
 
 const breadcrumbs = [
-    { title: 'Added Options', href: '/added-options' },
+    { title: 'Added Options', href: 'dashboard/added-options' },
 ];
 
 export default function AddedOptionsIndex() {
@@ -33,7 +33,7 @@ export default function AddedOptionsIndex() {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         editingAddedOption
-            ? put(route('added-options.update', editingAddedOption.id), {
+            ? put(route('dashboard.added-options.update', editingAddedOption.id), {
                 ...data,
                 onSuccess: () => {
                     reset();
@@ -44,7 +44,7 @@ export default function AddedOptionsIndex() {
                     toast.error('Failed to update added option.');
                 }
             })
-            : post(route('added-options.store'), {
+            : post(route('dashboard.added-options.store'), {
                 ...data,
                 onSuccess: () => {
                     reset();
@@ -69,7 +69,7 @@ export default function AddedOptionsIndex() {
 
     const handleDelete = (id: number | undefined) => {
         if (id) {
-            destroy(route('added-options.destroy', id), {
+            destroy(route('dashboard.added-options.destroy', id), {
                 onSuccess: () => {
                     toast.success('Added option deleted successfully.');
                 },
@@ -82,7 +82,7 @@ export default function AddedOptionsIndex() {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        window.location.href = `/added-options?search=${searchQuery}`;
+        window.location.href = `added-options?search=${searchQuery}`;
     };
 
     return (

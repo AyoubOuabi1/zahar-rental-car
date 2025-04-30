@@ -11,7 +11,7 @@ import { PlacesTable } from '@/components/backoffice/places/PlacesTable';
 import { Place } from '@/types/Place';
 
 const breadcrumbs = [
-    { title: 'Places', href: '/places' },
+    { title: 'Places', href: 'dashboard/places' },
 ];
 
 export default function PlacesManagement() {
@@ -29,7 +29,7 @@ export default function PlacesManagement() {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         editingPlace
-            ? put(route('places.update', { place: editingPlace.id }), {
+            ? put(route('dashboard.places.update', { place: editingPlace.id }), {
                 title: data.title,
                 description: data.description,
                 image_url: data.image_url,
@@ -42,7 +42,7 @@ export default function PlacesManagement() {
                     toast.error('Update failed: ' + JSON.stringify(errors));
                 }
             })
-            : post(route('places.store'), {
+            : post(route('dashboard.places.store'), {
                 title: data.title,
                 description: data.description,
                 image_url: data.image_url,
@@ -66,7 +66,7 @@ export default function PlacesManagement() {
 
     const handleDelete = (id: number | undefined) => {
         if (id) {
-            destroy(route('places.destroy', { place: id }), {
+            destroy(route('dashboard.places.destroy', { place: id }), {
                 onSuccess: () => {
                     toast.success('Place deleted successfully.');
                 },

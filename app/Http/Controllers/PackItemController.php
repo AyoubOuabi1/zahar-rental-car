@@ -31,7 +31,7 @@ class PackItemController extends Controller
 
         $packItem = PackItem::create($request->all());
 
-        return redirect()->route('packitems.index')->with('success', 'Pack item created successfully.');
+        return redirect()->route('dashboard/packitems.index')->with('success', 'Pack item created successfully.');
     }
 
     // Show a specific pack item
@@ -52,13 +52,13 @@ class PackItemController extends Controller
 
         $packitem->update($request->all());
 
-        return redirect()->route('packitems.index')->with('success', 'Pack item updated successfully.');
+        return redirect()->route('dashboard/packitems.index')->with('success', 'Pack item updated successfully.');
     }
 
     // Delete a pack item
     public function destroy(PackItem $packitem)
     {
         $packitem->delete();
-        return redirect()->route('packitems.index')->with('success', 'Pack item deleted successfully.');
+        return redirect()->route('dashboard/packitems.index')->with('success', 'Pack item deleted successfully.');
     }
 }

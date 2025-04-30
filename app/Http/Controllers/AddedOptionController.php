@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class AddedOptionController extends Controller
 {
-    // List all added options
     public function index()
     {
         $addedOptions = AddedOption::all();
@@ -28,18 +27,10 @@ class AddedOptionController extends Controller
 
         $addedOption = AddedOption::create($request->all());
 
-        return redirect()->route('added-options.index')->with('success', 'Added option created successfully.');
+        return redirect()->route('dashboard/added-options.index')->with('success', 'Added option created successfully.');
     }
 
-    // Show a specific added option
-    public function show(AddedOption $addedOption)
-    {
-        return Inertia::render('AddedOptions/Show', [
-            'addedOption' => $addedOption,
-        ]);
-    }
 
-    // Update an added option
     public function update(Request $request, AddedOption $addedOption)
     {
         $request->validate([
@@ -50,13 +41,12 @@ class AddedOptionController extends Controller
 
         $addedOption->update($request->all());
 
-        return redirect()->route('added-options.index')->with('success', 'Added option updated successfully.');
+        return redirect()->route('dashboard/added-options.index')->with('success', 'Added option updated successfully.');
     }
 
-    // Delete an added option
     public function destroy(AddedOption $addedOption)
     {
         $addedOption->delete();
-        return redirect()->route('added-options.index')->with('success', 'Added option deleted successfully.');
+        return redirect()->route('dashboard/added-options.index')->with('success', 'Added option deleted successfully.');
     }
 }

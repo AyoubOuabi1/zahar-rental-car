@@ -11,7 +11,7 @@ import { ReservationsTable } from '@/components/backoffice/reservation/Reservati
 import { ReservationForm } from '@/components/backoffice/reservation/ReservationForm';
 
 const breadcrumbs = [
-    { title: 'Reservations', href: '/reservations' },
+    { title: 'Reservations', href: 'dashboard/reservations' },
 ];
 
 export default function index() {
@@ -43,7 +43,7 @@ export default function index() {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('reservations.store'), {
+        post(route('dashboard.reservations.store'), {
                 data,
                 onSuccess: () => {
                     reset();
@@ -57,7 +57,7 @@ export default function index() {
 
     const handleDelete = (id: number | undefined) => {
         if (id) {
-            destroy(route('reservations.destroy', id), {
+            destroy(route('dashboard.reservations.destroy', id), {
                 onSuccess: () => {
                     toast('Reservation deleted successfully.');
                 },
@@ -67,7 +67,7 @@ export default function index() {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        window.location.href = `/reservations?search=${searchQuery}`;
+        window.location.href = `dashboard/reservations?search=${searchQuery}`;
     };
 
     return (

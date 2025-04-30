@@ -128,7 +128,7 @@ class ReservationController extends Controller
 
             DB::commit();
 
-            return redirect()->route('reservations.index')->with('success', 'Reservation created successfully.');
+            return redirect()->route('dashboard/reservations.index')->with('success', 'Reservation created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors([
@@ -229,7 +229,7 @@ class ReservationController extends Controller
 
             DB::commit();
 
-            return redirect()->route('reservations.index')->with('success', 'Reservation updated successfully.');
+            return redirect()->route('dashboard/reservations.index')->with('success', 'Reservation updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors([
@@ -250,7 +250,7 @@ class ReservationController extends Controller
         $reservation->addedOptions()->detach();
         $reservation->delete();
 
-        return redirect()->route('reservations.index')->with('success', 'Reservation deleted successfully.');
+        return redirect()->route('dashboard/reservations.index')->with('success', 'Reservation deleted successfully.');
     }
 
     public function changeStatus(Request $request, Reservation $reservation)
@@ -261,7 +261,7 @@ class ReservationController extends Controller
 
         $reservation->update(['status' => $request->status]);
 
-        return redirect()->route('reservations.index')->with('success', 'Reservation status updated successfully.');
+        return redirect()->route('dashboard/reservations.index')->with('success', 'Reservation status updated successfully.');
     }
 
     public function getAvailableCars(Request $request)

@@ -1,100 +1,12 @@
 import React from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import CarCard from '@/components/frontoffice/CarCard';
+import { Car } from '@/types/Car';
+interface CarCarouselProps {
+    cars: Car[];
+}
 
-export default function CarRentalCarousel() {
-    const cars = [
-        {
-            id: 1,
-            brand: 'HYUNDAI 1',
-            model: '110',
-            category: 'ÉCONOMIE',
-            fuel: 'Diesel',
-            transmission: 'Manuel',
-            luggage: 3,
-            seats: 5,
-            ac: true,
-            doors: 5,
-            image: 'https://cristallinecar.com/storage//cars/9fwMmOOMDfW0mKPjcTRb8jTM00MoI8QYfSlEzeHw.jpg',
-            discount: 15,
-            pricePerDay: 50, // Add price per day
-        },
-        {
-            id: 2,
-            brand: 'DACIA 2',
-            model: 'LOGAN ',
-            category: 'ÉCONOMIE',
-            fuel: 'Diesel',
-            transmission: 'Manuel',
-            luggage: 3,
-            seats: 5,
-            ac: true,
-            doors: 5,
-            image: 'https://cristallinecar.com/storage//cars/9fwMmOOMDfW0mKPjcTRb8jTM00MoI8QYfSlEzeHw.jpg',
-            discount: 15,
-            pricePerDay: 45, // Add price per day
-        },
-        {
-            id: 3,
-            brand: 'KIA 3',
-            model: 'PICANTO',
-            category: 'ÉCONOMIE',
-            fuel: 'Petrol',
-            transmission: 'Automatic',
-            luggage: 2,
-            seats: 4,
-            ac: true,
-            doors: 3,
-            image: 'https://cristallinecar.com/storage//cars/9fwMmOOMDfW0mKPjcTRb8jTM00MoI8QYfSlEzeHw.jpg',
-            discount: 10,
-            pricePerDay: 40, // Add price per day
-        },
-        {
-            id: 4,
-            brand: 'KIA 4',
-            model: 'PICANTO',
-            category: 'ÉCONOMIE',
-            fuel: 'Petrol',
-            transmission: 'Automatic',
-            luggage: 2,
-            seats: 4,
-            ac: true,
-            doors: 3,
-            image: 'https://cristallinecar.com/storage//cars/9fwMmOOMDfW0mKPjcTRb8jTM00MoI8QYfSlEzeHw.jpg',
-            discount: 10,
-            pricePerDay: 40, // Add price per day
-        },
-        {
-            id: 5,
-            brand: 'KIA 5',
-            model: 'PICANTO',
-            category: 'ÉCONOMIE',
-            fuel: 'Petrol',
-            transmission: 'Automatic',
-            luggage: 2,
-            seats: 4,
-            ac: true,
-            doors: 3,
-            image: 'https://cristallinecar.com/storage//cars/9fwMmOOMDfW0mKPjcTRb8jTM00MoI8QYfSlEzeHw.jpg',
-            discount: 10,
-            pricePerDay: 40, // Add price per day
-        },
-        {
-            id: 6,
-            brand: 'KIA 6',
-            model: 'PICANTO',
-            category: 'ÉCONOMIE',
-            fuel: 'Petrol',
-            transmission: 'Automatic',
-            luggage: 2,
-            seats: 4,
-            ac: true,
-            doors: 3,
-            image: 'https://cristallinecar.com/storage//cars/9fwMmOOMDfW0mKPjcTRb8jTM00MoI8QYfSlEzeHw.jpg',
-            discount: 10,
-            pricePerDay: 40, // Add price per day
-        },
-    ];
+export default function CarRentalCarousel({ cars }: CarCarouselProps) {
     return (
         <section className="py-16 bg-gradient-to-b from-blue-50 to-white">
             {/* Title */}

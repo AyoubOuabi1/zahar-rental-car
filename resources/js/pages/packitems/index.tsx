@@ -11,7 +11,7 @@ import { PackItemForm } from '@/components/backoffice/packs--items/PackItemForm'
 import { PackItemsTable } from '@/components/backoffice/packs--items/PackItemsTable';
 
 const breadcrumbs = [
-    { title: 'Pack Items', href: '/packitems' },
+    { title: 'Pack Items', href: 'dashboard/packitems' },
 ];
 
 export default function Index() {
@@ -28,7 +28,7 @@ export default function Index() {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         editingPackItem
-            ? put(route('packitems.update', editingPackItem.id), {
+            ? put(route('dashboard.packitems.update', editingPackItem.id), {
                 data,
                 onSuccess: () => {
                     reset();
@@ -36,7 +36,7 @@ export default function Index() {
                     toast('Pack item updated successfully.');
                 },
             })
-            : post(route('packitems.store'), {
+            : post(route('dashboard.packitems.store'), {
                 data,
                 onSuccess: () => {
                     reset();
@@ -54,7 +54,7 @@ export default function Index() {
 
     const handleDelete = (id: number | undefined) => {
         if (id) {
-            destroy(route('packitems.destroy', id), {
+            destroy(route('dashboard.packitems.destroy', id), {
                 onSuccess: () => {
                     toast('Pack item deleted successfully.');
                 },

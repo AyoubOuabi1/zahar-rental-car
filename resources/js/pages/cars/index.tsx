@@ -11,7 +11,7 @@ import { CarForm } from '@/components/backoffice/cars/CarForm ';
 import { CarsTable } from '@/components/backoffice/cars/CarsTable ';
 
 const breadcrumbs = [
-    { title: 'Cars', href: '/cars' },
+    { title: 'Cars', href: 'dashboard/cars' },
 ];
 
 export default function CarsManagement() {
@@ -39,7 +39,7 @@ export default function CarsManagement() {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         editingCar
-            ? put(route('cars.update', editingCar.id), {
+            ? put(route('dashboard.cars.update', editingCar.id), {
                 data,
                 onSuccess: () => {
                     reset();
@@ -50,7 +50,7 @@ export default function CarsManagement() {
                     toast.error('Failed to update car.');
                 },
             })
-            : post(route('cars.store'), {
+            : post(route('dashboard.cars.store'), {
                 data,
                 onSuccess: () => {
                     reset();
@@ -71,7 +71,7 @@ export default function CarsManagement() {
 
     const handleDelete = (id: number | undefined) => {
         if (id) {
-            destroy(route('cars.destroy', id), {
+            destroy(route('dashboard.cars.destroy', id), {
                 onSuccess: () => {
                     toast.success('Car deleted successfully.');
                 },

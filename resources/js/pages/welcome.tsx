@@ -1,43 +1,39 @@
-import Header from '@/components/frontoffice/header';
+import React from 'react';
+import { Head, usePage } from '@inertiajs/react';
 import ReservationSection from '@/components/frontoffice/ReservationSection';
 import PremiumProtection from '@/components/frontoffice/protectionItems';
 import CarCarousel from '@/components/frontoffice/CarCarousel';
 import WhyChooseUs from '@/components/frontoffice/WhyChooseUs';
 import ZaharInNumbers from '@/components/frontoffice/ZaharInNumbers';
-import Footer from '@/components/frontoffice/Footer';
-
+import { Car } from '@/types/Car';
+import FrontOfficeLayout from '@/layouts/FrontOfficeLayout';
 
 export default function Welcome() {
+    const { cars } = usePage<{ cars: Car[] }>().props;
 
     return (
-        <>
-            <div className="fixed top-0 left-0 w-full z-50">
-                <Header />
-            </div>
+        <FrontOfficeLayout>
+            <Head title="Welcome" />
 
-            <div className="pt-15">
+            <div>
                 <ReservationSection />
             </div>
+
             <div>
                 <PremiumProtection />
             </div>
+
             <div>
-                <CarCarousel />
+                <CarCarousel cars={cars} />
             </div>
+
             <div>
-                {/* Other sections */}
                 <WhyChooseUs />
-                {/* Other sections */}
             </div>
+
             <div>
-                {/* Other sections */}
                 <ZaharInNumbers />
-                {/* Other sections */}
             </div>
-            <div>
-                {/* Other sections */}
-                <Footer />
-            </div>
-           </>
+        </FrontOfficeLayout>
     );
 }

@@ -26,7 +26,6 @@ class ClientController extends Controller
         ]);
     }
 
-    // Store a new client
     public function store(Request $request)
     {
         $request->validate([
@@ -40,18 +39,9 @@ class ClientController extends Controller
 
         $client = Client::create($request->all());
 
-        return redirect()->route('clients.index')->with('success', 'Client created successfully.');
+        return redirect()->route('dashboard/clients.index')->with('success', 'Client created successfully.');
     }
 
-    // Show a specific client
-    public function show(Client $client)
-    {
-        return Inertia::render('Clients/Show', [
-            'client' => $client,
-        ]);
-    }
-
-    // Update a client
     public function update(Request $request, Client $client)
     {
         $request->validate([
@@ -65,13 +55,13 @@ class ClientController extends Controller
 
         $client->update($request->all());
 
-        return redirect()->route('clients.index')->with('success', 'Client updated successfully.');
+        return redirect()->route('dashboard/clients.index')->with('success', 'Client updated successfully.');
     }
 
     // Delete a client
     public function destroy(Client $client)
     {
         $client->delete();
-        return redirect()->route('clients.index')->with('success', 'Client deleted successfully.');
+        return redirect()->route('dashboard/clients.index')->with('success', 'Client deleted successfully.');
     }
 }
