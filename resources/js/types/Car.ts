@@ -12,5 +12,5 @@ export interface Car {
     doors: number;
     image: string;
     discount: number;
-    pricePerDay: number;
+    price_per_day: number;
 }

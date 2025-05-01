@@ -39,7 +39,7 @@ class PlaceController extends Controller
             'image_url' => $request->image_url,
         ]);
 
-        return redirect()->route('dashboard/places.index')->with('success', 'Place created successfully.');
+        return redirect()->route('dashboard.places.index')->with('success', 'Place created successfully.');
     }
 
     public function update(Request $request, Place $place)
@@ -52,13 +52,13 @@ class PlaceController extends Controller
 
         $place->update($request->all());
 
-        return redirect()->route('dashboard/places.index')->with('success', 'Place updated successfully.');
+        return redirect()->route('dashboard.places.index')->with('success', 'Place updated successfully.');
     }
 
     public function destroy(Place $place)
     {
         Log::debug('Deleting place', ['place' => $place->toArray()]);
         $place->delete();
-        return redirect()->route('dashboard/places.index')->with('success', 'Place deleted successfully.');
+        return redirect()->route('dashboard.places.index')->with('success', 'Place deleted successfully.');
     }
 }

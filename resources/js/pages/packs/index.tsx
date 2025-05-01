@@ -66,7 +66,7 @@ export default function PacksManagement() {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        window.location.href = `/packs?search=${searchQuery}`;
+        window.location.href = `/dashboard/packs?search=${searchQuery}`;
     };
 
     return (

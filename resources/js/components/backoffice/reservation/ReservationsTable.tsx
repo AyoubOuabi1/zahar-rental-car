@@ -219,7 +219,7 @@ export function ReservationsTable({
                                         <div><strong>Flight Number:</strong> {selectedReservation.flight_number ?? 'N/A'}</div>
                                         <div><strong>Client:</strong> {clients.find(client => client.id === selectedReservation.client_id)?.full_name ?? 'Unknown'}</div>
                                         <div><strong>Car:</strong> {cars.find(car => car.id === selectedReservation.car_id)?.model?? 'Unknown'}</div>
-                                        <div><strong>price/Day:</strong> {cars.find(car => car.id === selectedReservation.car_id)?.price_per_day ?? 'Unknown'}</div>
+                                        <div><strong>price/Day:</strong> {cars.find(car => car.id === selectedReservation.car_id)?.price_per_day ?? 'Unknown'}DHs</div>
 
                                         <div><strong>Pick-up Date:</strong> {formatDate(selectedReservation.date_from)}</div>
                                         <div><strong>Drop-off Date:</strong> {formatDate(selectedReservation.date_to)}</div>
@@ -230,7 +230,7 @@ export function ReservationsTable({
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div><strong>Status:</strong> {selectedReservation.status}</div>
-                                        <div><strong>Total Price:</strong> ${selectedReservation.total_price}</div>
+                                        <div><strong>Total Price:</strong> {selectedReservation.total_price}DHs</div>
                                     </div>
                                     {selectedReservation.added_options && selectedReservation.added_options.length > 0 && (
                                         <div>
@@ -240,7 +240,7 @@ export function ReservationsTable({
                                                     const optionDetails = options.find(opt => opt.id === option.id);
                                                     return (
                                                         <li key={idx}>
-                                                            {optionDetails ? optionDetails.title : `Option ID: ${option.id}`} - Quantity: {option.pivot.quantity} - Price/Day: ${option.pivot.price_at_reservation}
+                                                            {optionDetails ? optionDetails.title : `Option ID: ${option.id}`} - Quantity: {option.pivot.quantity} - Price/Day: {option.pivot.price_at_reservation}DHs
                                                         </li>
                                                     );
                                                 })}

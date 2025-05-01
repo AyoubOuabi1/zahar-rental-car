@@ -68,7 +68,7 @@ export default function ClientsManagement() {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        window.location.href = `/clients?search=${searchQuery}`;
+        window.location.href = `/dashboard/clients?search=${searchQuery}`;
     };
 
     return (

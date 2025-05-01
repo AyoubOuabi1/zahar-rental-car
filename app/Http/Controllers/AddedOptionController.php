@@ -27,7 +27,7 @@ class AddedOptionController extends Controller
 
         $addedOption = AddedOption::create($request->all());
 
-        return redirect()->route('dashboard/added-options.index')->with('success', 'Added option created successfully.');
+        return redirect()->route('dashboard.added-options.index')->with('success', 'Added option created successfully.');
     }
 
 
@@ -41,12 +41,12 @@ class AddedOptionController extends Controller
 
         $addedOption->update($request->all());
 
-        return redirect()->route('dashboard/added-options.index')->with('success', 'Added option updated successfully.');
+        return redirect()->route('dashboard.added-options.index')->with('success', 'Added option updated successfully.');
     }
 
     public function destroy(AddedOption $addedOption)
     {
         $addedOption->delete();
-        return redirect()->route('dashboard/added-options.index')->with('success', 'Added option deleted successfully.');
+        return redirect()->route('dashboard.added-options.index')->with('success', 'Added option deleted successfully.');
     }
 }

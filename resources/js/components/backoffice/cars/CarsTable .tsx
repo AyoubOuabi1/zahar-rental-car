@@ -110,7 +110,7 @@ export const CarsTable = ({ cars, onEdit, onDelete }: CarsTableProps) => {
         },
         {
             accessorKey: "price_per_day",
-            header: "Price/Day",
+            header: "Price/Day - DH",
         },
         {
             id: "actions",

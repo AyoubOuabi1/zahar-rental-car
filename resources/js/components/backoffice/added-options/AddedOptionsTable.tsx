@@ -69,7 +69,7 @@ export const AddedOptionsTable = ({
             accessorKey: "price_per_day",
             header: "Price Per Day",
             cell: ({ row }) => (
-                <span>${parseFloat(row.getValue("price_per_day")).toFixed(2)}</span>
+                <span>{parseFloat(row.getValue("price_per_day")).toFixed(2)} DHs</span>
             ),
         },
         {

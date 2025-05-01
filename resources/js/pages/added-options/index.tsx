@@ -82,7 +82,7 @@ export default function AddedOptionsIndex() {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        window.location.href = `added-options?search=${searchQuery}`;
+        window.location.href = `/dashboard/added-options?search=${searchQuery}`;
     };
 
     return (

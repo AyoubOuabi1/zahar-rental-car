@@ -32,7 +32,7 @@ export default function CarCard({
                                     doors,
                                     image,
                                     discount,
-                                    pricePerDay,
+                                    price_per_day,
                                 }: CarCardProps) {
     return (
         <motion.div
@@ -87,7 +87,7 @@ export default function CarCard({
                 {/* Price Per Day */}
                 <div className="p-4 border-t border-gray-200 flex items-center justify-between">
                     <p className="text-lg font-semibold text-gray-800">
-                        {pricePerDay} € / jour
+                        {price_per_day} DHs / jour
                         {discount > 0 && (
                         <span className="ml-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                             -{discount}%

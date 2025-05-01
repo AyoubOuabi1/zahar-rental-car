@@ -63,7 +63,7 @@ export const PacksTable = ({ packs, onEdit, onDelete }: PacksTableProps) => {
         {
             accessorKey: "price_per_day",
             header: "Price/Day",
-            cell: ({ row }) => `$${row.original.price_per_day}`,
+            cell: ({ row }) => `${row.original.price_per_day} DHs`,
         },
         {
             id: "actions",

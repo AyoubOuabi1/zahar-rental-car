@@ -83,8 +83,8 @@ export default function CarsManagement() {
     };
 
     const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault(); // Prevent default form submission
-        window.location.href = `/cars?search=${encodeURIComponent(searchQuery)}`;
+        e.preventDefault();
+        window.location.href = `/dashboard/cars?search=${encodeURIComponent(searchQuery)}`;
     };
 
     return (

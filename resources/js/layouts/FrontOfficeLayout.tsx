@@ -13,7 +13,7 @@ export default function FrontOfficeLayout({ children }: FrontOfficeLayoutProps) 
                 <Header />
             </div>
 
-            <div className="pt-20">
+            <div className="pt-10">
                 {children}
             </div>
 

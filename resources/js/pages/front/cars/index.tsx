@@ -12,8 +12,6 @@ export default function index({ cars }: Props) {
     return (
         <FrontOfficeLayout>
             <Head title="Nos Voitures" />
-
-            {/* Hero Banner */}
             <div className="relative bg-blue-900 text-white py-16">
                 <div className="absolute inset-0 z-0 overflow-hidden">
                     <img
@@ -34,12 +32,18 @@ export default function index({ cars }: Props) {
                     </div>
                 </div>
             </div>
-
-            {/* Cars Grid */}
-            <div className="container mx-auto px-4 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="container mx-auto px-6 py-16 max-w-6xl">
+                <h2 className="text-3xl font-extrabold text-gray-900 mb-10 text-center" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                    🚗 Voitures Disponibles 🚗
+                </h2>
+                <div className="flex flex-wrap -ml-2">
                     {cars.map((car) => (
-                        <CarCard key={car.id} {...car} />
+                        <div
+                            key={car.id}
+                            className="pl-2 basis-full sm:basis-1/2 lg:basis-1/3 mb-4"
+                        >
+                            <CarCard {...car} />
+                        </div>
                     ))}
                 </div>
             </div>

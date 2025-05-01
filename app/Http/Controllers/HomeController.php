@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use App\Models\Place;
 use Inertia\Inertia;
 
 class HomeController
@@ -11,8 +12,10 @@ class HomeController
     {
 
         $cars = Car::all();
+        $places = Place::all();
         return Inertia::render('welcome', [
             'cars' => $cars,
+            'places' => $places,
         ]);
     }
 

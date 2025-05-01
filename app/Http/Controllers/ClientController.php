@@ -39,7 +39,7 @@ class ClientController extends Controller
 
         $client = Client::create($request->all());
 
-        return redirect()->route('dashboard/clients.index')->with('success', 'Client created successfully.');
+        return redirect()->route('dashboard.clients.index')->with('success', 'Client created successfully.');
     }
 
     public function update(Request $request, Client $client)
@@ -55,13 +55,13 @@ class ClientController extends Controller
 
         $client->update($request->all());
 
-        return redirect()->route('dashboard/clients.index')->with('success', 'Client updated successfully.');
+        return redirect()->route('dashboard.clients.index')->with('success', 'Client updated successfully.');
     }
 
     // Delete a client
     public function destroy(Client $client)
     {
         $client->delete();
-        return redirect()->route('dashboard/clients.index')->with('success', 'Client deleted successfully.');
+        return redirect()->route('dashboard.clients.index')->with('success', 'Client deleted successfully.');
     }
 }

@@ -45,7 +45,7 @@ class PackController extends Controller
 
         Pack::create($data);
 
-        return redirect()->route('dashboard/packs.index')->with('success', 'Pack created successfully.');
+        return redirect()->route('dashboard.packs.index')->with('success', 'Pack created successfully.');
     }
 
 
@@ -66,12 +66,12 @@ class PackController extends Controller
 
         $pack->update($request->all());
 
-        return redirect()->route('dashboard/packs.index')->with('success', 'Pack updated successfully.');
+        return redirect()->route('dashboard.packs.index')->with('success', 'Pack updated successfully.');
     }
 
     public function destroy(Pack $pack)
     {
         $pack->delete();
-        return redirect()->route('dashboard/packs.index')->with('success', 'Pack deleted successfully.');
+        return redirect()->route('dashboard.packs.index')->with('success', 'Pack deleted successfully.');
     }
 }

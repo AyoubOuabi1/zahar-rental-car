@@ -64,7 +64,7 @@ export default function Index() {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        window.location.href = `/packitems?search=${searchQuery}`;
+        window.location.href = `/dashboard/packitems?search=${searchQuery}`;
     };
 
     return (

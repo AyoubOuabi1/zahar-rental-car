@@ -9,14 +9,14 @@ import { Car } from '@/types/Car';
 import FrontOfficeLayout from '@/layouts/FrontOfficeLayout';
 
 export default function Welcome() {
-    const { cars } = usePage<{ cars: Car[] }>().props;
+    const { cars , places } = usePage<{ cars: Car[] }>().props;
 
     return (
         <FrontOfficeLayout>
             <Head title="Welcome" />
 
             <div>
-                <ReservationSection />
+                <ReservationSection places={places} />
             </div>
 
             <div>
