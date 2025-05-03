@@ -12,7 +12,7 @@ import {
     SelectItem,
 } from '@/components/ui/select';
 import { MultiSelect } from '@/components/ui/multi-select';
-import { Reservation, Car, Client, Pack, Place, AddedOption } from '@/types/Reservation';
+import { Reservation, Car, Client, Place, AddedOption } from '@/types/Reservation';
 
 interface ReservationFormProps {
     data: Reservation;
@@ -22,7 +22,6 @@ interface ReservationFormProps {
     onValueChange: (field: keyof Reservation, value: any) => void;
     cars: Car[];
     clients: Client[];
-    packs: Pack[];
     places: Place[];
     options: AddedOption[];
 }
@@ -35,7 +34,6 @@ export const ReservationForm = ({
     onValueChange,
     cars,
     clients,
-    packs,
     places,
     options,
 }: ReservationFormProps) => {
@@ -176,27 +174,6 @@ export const ReservationForm = ({
                     </Select>
                     <InputError message={errors.client_id} />
                 </div>
-
-                <div>
-                    <Label htmlFor="pack_id">Pack</Label>
-                    <Select
-                        value={data.pack_id?.toString() || ''}
-                        onValueChange={(value) => onValueChange('pack_id', Number(value))}
-                    >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select a pack" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {packs.map((pack) => (
-                                <SelectItem key={pack.id} value={pack.id.toString()}>
-                                    {pack.title}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                    <InputError message={errors.pack_id} />
-                </div>
-
                 <div>
                     <Label htmlFor="added_options">Additional Options</Label>
                     <MultiSelect

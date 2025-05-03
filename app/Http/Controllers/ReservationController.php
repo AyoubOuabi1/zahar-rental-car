@@ -24,7 +24,7 @@ class ReservationController extends Controller
         $dateTo = $request->query('date_to');
 
         $reservations = Reservation::query()
-            ->with(['client', 'car', 'pickupPlace', 'dropoffPlace', 'pack', 'addedOptions'])
+            ->with(['client', 'car', 'pickupPlace', 'dropoffPlace', 'addedOptions'])
             ->get();
 
         return Inertia::render('reservations/index', [
@@ -32,7 +32,6 @@ class ReservationController extends Controller
             'cars' => Car::all(),
             'clients' => Client::all(),
             'places' => Place::all(),
-            'packs' => Pack::all(),
             'options' => AddedOption::all(),
             'search' => $search,
             'status' => $status,
@@ -55,7 +54,6 @@ class ReservationController extends Controller
             'clients' => Client::all(),
             'cars' => Car::all(),
             'places' => Place::all(),
-            'packs' => Pack::all(),
             'addedOptions' => AddedOption::all(),
             'statuses' => [
                 Reservation::STATUS_PENDING,
@@ -74,7 +72,6 @@ class ReservationController extends Controller
             'car_id' => 'required|exists:cars,id',
             'pickup_place_id' => 'required|exists:places,id',
             'dropoff_place_id' => 'required|exists:places,id',
-            'pack_id' => 'nullable|exists:packs,id',
             'flight_number' => 'nullable|string|max:50',
             'date_from' => 'required|date',
             'time_from' => 'required|date_format:H:i',
@@ -103,7 +100,6 @@ class ReservationController extends Controller
                 'car_id' => $validated['car_id'],
                 'pickup_place_id' => $validated['pickup_place_id'],
                 'dropoff_place_id' => $validated['dropoff_place_id'],
-                'pack_id' => $validated['pack_id'] ?? null,
                 'flight_number' => $validated['flight_number'] ?? null,
                 'date_from' => $datetimeFrom,
                 'date_to' => $datetimeTo,
@@ -141,7 +137,7 @@ class ReservationController extends Controller
     public function show(Reservation $reservation)
     {
         return Inertia::render('reservations/show', [
-            'reservation' => $reservation->load(['client', 'car', 'pickupPlace', 'dropoffPlace', 'pack', 'addedOptions']),
+            'reservation' => $reservation->load(['client', 'car', 'pickupPlace', 'dropoffPlace', 'addedOptions']),
         ]);
     }
 
@@ -152,7 +148,6 @@ class ReservationController extends Controller
             'clients' => Client::all(),
             'cars' => Car::all(),
             'places' => Place::all(),
-            'packs' => Pack::all(),
             'addedOptions' => AddedOption::all(),
             'statuses' => [
                 Reservation::STATUS_PENDING,
@@ -171,7 +166,6 @@ class ReservationController extends Controller
             'car_id' => 'required|exists:cars,id',
             'pickup_place_id' => 'required|exists:places,id',
             'dropoff_place_id' => 'required|exists:places,id',
-            'pack_id' => 'nullable|exists:packs,id',
             'flight_number' => 'nullable|string|max:50',
             'date_from' => 'required|date',
             'date_to' => 'required|date|after_or_equal:date_from',
@@ -203,7 +197,6 @@ class ReservationController extends Controller
                 'car_id' => $validated['car_id'],
                 'pickup_place_id' => $validated['pickup_place_id'],
                 'dropoff_place_id' => $validated['dropoff_place_id'],
-                'pack_id' => $validated['pack_id'] ?? null,
                 'flight_number' => $validated['flight_number'] ?? null,
                 'date_from' => $validated['date_from'],
                 'date_to' => $validated['date_to'],
@@ -290,7 +283,7 @@ class ReservationController extends Controller
     public function generateInvoice(Reservation $reservation)
     {
         return Inertia::render('reservations/invoice', [
-            'reservation' => $reservation->load(['client', 'car', 'pickupPlace', 'dropoffPlace', 'pack', 'addedOptions']),
+            'reservation' => $reservation->load(['client', 'car', 'pickupPlace', 'dropoffPlace', 'addedOptions']),
         ]);
     }
 

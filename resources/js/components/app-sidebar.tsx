@@ -28,16 +28,6 @@ const mainNavItems: NavItem[] = [
         icon: Calendar,
     },
     {
-        title: 'Packs',
-        href: '/dashboard/packs',
-        icon: Package,
-    },
-    {
-        title: 'Pack Items',
-        href: '/dashboard/packitems',
-        icon: Settings,
-    },
-    {
         title: 'Added Options',
         href: '/dashboard/added-options',
         icon: Settings,

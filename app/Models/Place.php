@@ -10,7 +10,7 @@ class Place extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'description', 'image_url'
+        'title', 'description', 'image_url','price'
     ];
     public function pickupReservations()
     {

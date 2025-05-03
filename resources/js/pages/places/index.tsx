@@ -24,6 +24,7 @@ export default function PlacesManagement() {
         title: '',
         description: '',
         image_url: '',
+        price: 0,
     });
 
     const submit: FormEventHandler = (e) => {
@@ -33,6 +34,7 @@ export default function PlacesManagement() {
                 title: data.title,
                 description: data.description,
                 image_url: data.image_url,
+                price: data.price,
                 onSuccess: () => {
                     reset();
                     setIsDialogOpen(false);
@@ -46,6 +48,7 @@ export default function PlacesManagement() {
                 title: data.title,
                 description: data.description,
                 image_url: data.image_url,
+                price: data.price,
                 onSuccess: () => {
                     reset();
                     setIsDialogOpen(false);
@@ -60,6 +63,7 @@ export default function PlacesManagement() {
             title: place.title,
             description: place.description,
             image_url: place.image_url,
+            price: place.price,
         });
         setIsDialogOpen(true);
     };

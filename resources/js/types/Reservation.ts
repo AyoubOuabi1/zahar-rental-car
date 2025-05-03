@@ -9,7 +9,6 @@ export interface Reservation {
     dropoff_place_id: number;
     car_id: number;
     client_id: number;
-    pack_id?: number | null;
     status: string;
     total_price: number;
     added_options?: {
@@ -31,10 +30,7 @@ export interface Car {
     model: string;
     price_per_day: number;
 }
-export interface Pack {
-    id: number;
-    title: string;
-}
+
 export interface Client {
     id: number;
     full_name: string;

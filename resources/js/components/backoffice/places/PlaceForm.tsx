@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEventHandler } from 'react';
+import { FormEventHandler } from 'react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -91,6 +91,15 @@ export const PlaceForm = ({
                         onChange={(e) => onValueChange('image_url', e.target.value)}
                     />
                     <InputError message={errors.image_url} />
+                </div>
+                <div>
+                    <Label htmlFor="price">TITLE</Label>
+                    <Input
+                        type="number"
+                        value={data.price}
+                        onChange={(e) => onValueChange('price', e.target.value)}
+                    />
+                    <InputError message={errors.price} />
                 </div>
             </div>
             <Button type="submit" disabled={processing} className="mt-4">

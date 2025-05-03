@@ -16,7 +16,7 @@ interface CarCardProps {
     doors: number;
     image: string;
     discount: number;
-    pricePerDay: number;
+    price_per_day: number;
 }
 
 export default function CarCard({

@@ -14,7 +14,6 @@ class Reservation extends Model
         'car_id',
         'pickup_place_id',
         'dropoff_place_id',
-        'pack_id',
         'flight_number',
         'date_from',
         'date_to',
@@ -53,11 +52,6 @@ class Reservation extends Model
         return $this->belongsTo(Place::class, 'dropoff_place_id');
     }
 
-    public function pack()
-    {
-        return $this->belongsTo(Pack::class);
-    }
-
     public function addedOptions()
     {
         return $this->belongsToMany(AddedOption::class, 'reservation_added_option')
@@ -75,15 +69,16 @@ class Reservation extends Model
         $days = $this->total_days;
 
         $carPrice = $this->car->price_per_day * $days;
+        $pickupPlace= $this->pickupPlace->price;
+        $dropOffPlace= $this->dropoffPlace->price;
 
-        $packPrice = $this->pack ? $this->pack->price_per_day * $days : 0;
 
         $optionsTotal = 0;
         foreach ($this->addedOptions as $option) {
             $optionsTotal += $option->pivot->price_at_reservation * $option->pivot->quantity * $days;
         }
 
-        return $carPrice + $packPrice + $optionsTotal;
+        return $carPrice  + $optionsTotal+ $pickupPlace + $dropOffPlace;
     }
 
     public static function isCarAvailable($carId, $dateFrom, $dateTo, $excludeReservationId = null)
@@ -91,7 +86,6 @@ class Reservation extends Model
         $query = self::where('car_id', $carId)
             ->where('status', '!=', self::STATUS_CANCELLED)
             ->where(function ($query) use ($dateFrom, $dateTo) {
-                // Check if there's any overlap with existing reservations
                 $query->where(function ($q) use ($dateFrom, $dateTo) {
                     $q->where('date_from', '<=', $dateFrom)
                         ->where('date_to', '>=', $dateFrom);

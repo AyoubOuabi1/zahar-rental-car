@@ -3,5 +3,6 @@ export interface Place {
     title: string;
     description: string;
     image_url: string;
+    price: number;
 }
 

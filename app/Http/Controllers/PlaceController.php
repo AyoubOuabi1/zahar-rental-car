@@ -31,12 +31,15 @@ class PlaceController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'image_url' => 'required|url',
+            'price' => 'required|numeric',
         ]);
 
         Place::create([
             'title' => $request->title,
             'description' => $request->description,
             'image_url' => $request->image_url,
+            'price' => $request->price,
+
         ]);
 
         return redirect()->route('dashboard.places.index')->with('success', 'Place created successfully.');
@@ -48,6 +51,7 @@ class PlaceController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'image_url' => 'required|url',
+            'price' => 'required|numeric',
         ]);
 
         $place->update($request->all());

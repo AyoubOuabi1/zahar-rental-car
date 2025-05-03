@@ -6,7 +6,7 @@ import AppLayout from '@/layouts/app-layout';
 import { Plus, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Reservation, Car, Client, Pack, Place, AddedOption } from '@/types/Reservation';
+import { Reservation, Car, Client, Place, AddedOption } from '@/types/Reservation';
 import { ReservationsTable } from '@/components/backoffice/reservation/ReservationsTable';
 import { ReservationForm } from '@/components/backoffice/reservation/ReservationForm';
 
@@ -15,11 +15,10 @@ const breadcrumbs = [
 ];
 
 export default function index() {
-    const { reservations, cars, clients, packs, places, options, search } = usePage<{
+    const { reservations, cars, clients, places, options, search } = usePage<{
         reservations: Reservation[];
         cars: Car[];
         clients: Client[];
-        packs: Pack[];
         places: Place[];
         options: AddedOption[];
         search?: string;
@@ -37,7 +36,6 @@ export default function index() {
         dropoff_place_id: '',
         car_id: '',
         client_id: '',
-        pack_id: '',
         added_options: [],
     });
 
@@ -120,7 +118,6 @@ export default function index() {
                             onValueChange={(field, value) => setData(field, value)}
                             cars={cars}
                             clients={clients}
-                            packs={packs}
                             places={places}
                             options={options}
                         />

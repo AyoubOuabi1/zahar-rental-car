@@ -53,6 +53,10 @@ export const PlacesTable = ({ places, onEdit, onDelete }: PlacesTableProps) => {
             header: "Title",
         },
         {
+            accessorKey: "price",
+            header: "Price",
+        },
+        {
             accessorKey: "description",
             header: "Description",
             cell: ({ row }) => (
