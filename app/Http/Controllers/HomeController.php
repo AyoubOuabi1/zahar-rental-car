@@ -132,17 +132,19 @@ class HomeController
         ]);
     }
 
+// In HomeController.php
     public function storeReservation(Request $request)
     {
+        // Validate the request data
         $validated = $request->validate([
             'car_id' => 'required|exists:cars,id',
             'pickup_place_id' => 'required|exists:places,id',
             'dropoff_place_id' => 'required|exists:places,id',
-            'date_from' => 'required|date',
-            'time_from' => 'required|string',
-            'date_to' => 'required|date|after_or_equal:date_from',
-            'time_to' => 'required|string',
-            'added_options' => 'nullable|string',
+            'date_from' => 'required|date_format:Y-m-d H:i',
+            'date_to' => 'required|date_format:Y-m-d H:i|after_or_equal:date_from',
+            'options' => 'required|array',
+            'options.*.id' => 'required|exists:added_options,id',
+            'options.*.quantity' => 'required|integer|min:1',
             'full_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'mobile_number' => 'required|string|max:20',
@@ -150,77 +152,77 @@ class HomeController
             'permit_license_id' => 'required|string|max:50',
             'address' => 'nullable|string|max:255',
             'flight_number' => 'nullable|string|max:50',
+            'termsAccepted' => 'required|accepted',
         ]);
-
-        $datetimeFrom = $validated['date_from'] . ' ' . $validated['time_from'] . ':00';
-        $datetimeTo = $validated['date_to'] . ' ' . $validated['time_to'] . ':00';
-
-        // Check if car is available
-        if (!Reservation::isCarAvailable($validated['car_id'], $datetimeFrom, $datetimeTo)) {
-            return back()->withErrors([
-                'car_id' => 'La voiture sélectionnée n\'est pas disponible pour la période spécifiée.',
-            ])->withInput();
-        }
 
         DB::beginTransaction();
 
         try {
-            $client = Client::firstOrCreate(
+            // Find or create client
+            $client = Client::updateOrCreate(
                 ['email' => $validated['email']],
                 [
                     'full_name' => $validated['full_name'],
                     'mobile_number' => $validated['mobile_number'],
                     'identity_or_passport_number' => $validated['identity_or_passport_number'],
                     'permit_license_id' => $validated['permit_license_id'],
-                    'address' => $validated['address'] ?? '',
+                    'address' => $validated['address'] ?? null,
                 ]
             );
 
-            $reservation = new Reservation([
-                'client_id' => $client->id,
+            // Check car availability
+            if (!Reservation::isCarAvailable(
+                $validated['car_id'],
+                $validated['date_from'],
+                $validated['date_to']
+            )) {
+                throw new \Exception('This car is not available for the selected dates');
+            }
+
+            // Create the reservation
+            $reservation = $client->reservations()->create([
                 'car_id' => $validated['car_id'],
                 'pickup_place_id' => $validated['pickup_place_id'],
                 'dropoff_place_id' => $validated['dropoff_place_id'],
-                'flight_number' => $validated['flight_number'] ?? null,
-                'date_from' => $datetimeFrom,
-                'date_to' => $datetimeTo,
+                'flight_number' => $validated['flight_number'],
+                'date_from' => $validated['date_from'],
+                'date_to' => $validated['date_to'],
                 'status' => Reservation::STATUS_PENDING,
-                'total_price' => 0, // Will calculate later
+                'total_price' => 0, // Temporary value, will be calculated later
             ]);
 
-            $reservation->save();
-
-            // Process options if any
-            if (!empty($validated['added_options'])) {
-                $optionsData = json_decode($validated['added_options'], true);
-                if (is_array($optionsData)) {
-                    foreach ($optionsData as $optionData) {
-                        $option = AddedOption::find($optionData['id']);
-                        if ($option) {
-                            $reservation->addedOptions()->attach($option->id, [
-                                'quantity' => $optionData['quantity'],
-                                'price_at_reservation' => $option->price_per_day,
-                            ]);
-                        }
-                    }
-                }
+            // Attach selected options
+            foreach ($validated['options'] as $option) {
+                $reservation->addedOptions()->attach($option['id'], [
+                    'quantity' => $option['quantity'],
+                    'price_at_reservation' => AddedOption::findOrFail($option['id'])->price_per_day
+                ]);
             }
 
-            // Calculate and update total price
+            // Calculate and save final price
             $reservation->total_price = $reservation->calculateTotal();
             $reservation->save();
 
             DB::commit();
 
-            return redirect()->route('reservation.thankyou', ['id' => $reservation->id])
-                ->with('success', 'Votre réservation a été créée avec succès. Vous recevrez un email de confirmation.');
+            return Inertia::render('front/cars/thankyou', [
+                'reservation' => [
+                    'id' => $reservation->id,
+                    'date_from' => $reservation->date_from->format('d/m/Y H:i'),
+                    'date_to' => $reservation->date_to->format('d/m/Y H:i'),
+                    'car' => $reservation->car,
+                    'total_price' => $reservation->total_price,
+                ]
+            ]);
 
-        } catch (\Exception $e) {
+        }  catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Reservation Error: ' . $e->getMessage());
 
-            return back()->withErrors([
-                'message' => 'Une erreur est survenue lors de la création de la réservation: ' . $e->getMessage(),
-            ])->withInput();
+            // Return with errors using Inertia's error handling
+            return redirect()->back()->withErrors([
+                'system' => 'Une erreur est survenue: ' . $e->getMessage()
+            ]);
         }
     }
 }

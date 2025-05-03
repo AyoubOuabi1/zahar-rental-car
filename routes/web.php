@@ -14,7 +14,13 @@ Route::get('/cars', [HomeController::class, 'cars'])->name('cars');
 Route::post('/booking', [HomeController::class, 'getAvailableCars'])->name('booking-cars');
 Route::get('/reservation/options', [HomeController::class, 'options']);
 Route::get('/reservation/checkout', [HomeController::class, 'checkout']);
+// web.php
+Route::post('/reservation/store', [HomeController::class, 'storeReservation'])
+    ->name('reservation.store');
 
+Route::get('/reservation/thankyou', function () {
+    return Inertia::render('front/cars/thankyou');
+})->name('reservation.thankyou');
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->as('dashboard.')->group(function () {
     Route::get('/', function () {
         return Inertia::render('dashboard');

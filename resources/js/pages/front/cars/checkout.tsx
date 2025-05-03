@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import FrontOfficeLayout from '@/layouts/FrontOfficeLayout';
 import { Car } from '@/types/Car';
 import { Place } from '@/types/Place';
@@ -24,7 +24,7 @@ export default function Checkout({
                                      options = []
                                  }: Props) {
     // Form state
-    const [formData, setFormData] = useState({
+    const { data, setData, post, processing } = useForm({
         full_name: '',
         email: '',
         mobile_number: '',
@@ -32,7 +32,13 @@ export default function Checkout({
         permit_license_id: '',
         address: '',
         flight_number: '',
-        termsAccepted: false
+        termsAccepted: false,
+        car_id: car.id,
+        pickup_place_id: pickup_location,
+        dropoff_place_id: return_location,
+        date_from: date_from,
+        date_to: date_to,
+        options: options,
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -56,142 +62,61 @@ export default function Checkout({
         const date = new Date(dateString);
         return date.toTimeString().slice(0, 5);
     };
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, type, checked } = e.target;
+        setData(name, type === 'checkbox' ? checked : value);
+    };
 
     const getPlaceName = (placeId: string) => {
         const place = places.find(p => String(p.id) === String(placeId));
         return place ? place.title : 'Location inconnue';
     };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, type, checked } = e.target;
-        setFormData({
-            ...formData,
-            [name]: type === 'checkbox' ? checked : value
-        });
-
-        // Clear error when user types
-        if (errors[name]) {
-            setErrors({
-                ...errors,
-                [name]: ''
-            });
-        }
+    const getPlacePrice = (placeId: string) => {
+        const place = places.find(p => String(p.id) === String(placeId));
+        return place ? Number(place.price) : 0;
     };
 
-    const validateForm = () => {
-        const newErrors: Record<string, string> = {};
-
-        if (!formData.full_name.trim()) {
-            newErrors.full_name = 'Le nom complet est requis';
-        }
-
-        if (!formData.email.trim()) {
-            newErrors.email = 'L\'email est requis';
-        } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-            newErrors.email = 'Format d\'email invalide';
-        }
-
-        if (!formData.mobile_number.trim()) {
-            newErrors.mobile_number = 'Le numéro de téléphone est requis';
-        }
-
-        if (!formData.identity_or_passport_number.trim()) {
-            newErrors.identity_or_passport_number = 'Le numéro d\'identité ou de passeport est requis';
-        }
-
-        if (!formData.permit_license_id.trim()) {
-            newErrors.permit_license_id = 'Le numéro de permis est requis';
-        }
-
-        if (!formData.termsAccepted) {
-            newErrors.termsAccepted = 'Vous devez accepter les termes et conditions';
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
 
     useEffect(() => {
         // Base car price
-        const basePrice = car.price_per_day * diffDays;
+        const basePrice = car.price_per_day * diffDays  + getPlacePrice(pickup_location) + getPlacePrice(return_location)
 
         // Calculate options price
         const optPrice = options.reduce((acc, option) => {
-            const optionItem = option as any; // Using any for simplicity here
+            const optionItem = option as any;
             return acc + (optionItem.price_per_day ? optionItem.price_per_day * optionItem.quantity * diffDays : 0);
         }, 0);
-
         setOptionsTotal(optPrice);
         setTotal(basePrice + optPrice);
     }, [car, diffDays, options]);
 
+    const validateForm = () => {
+        const newErrors: Record<string, string> = {};
+        if (!data.full_name) newErrors.full_name = 'Le nom complet est requis';
+        if (!data.email) newErrors.email = 'L\'email est requis';
+        if (!data.mobile_number) newErrors.mobile_number = 'Le numéro de téléphone est requis';
+        if (!data.identity_or_passport_number) newErrors.identity_or_passport_number = 'Le numéro d\'identité ou de passeport est requis';
+        if (!data.permit_license_id) newErrors.permit_license_id = 'Le numéro de permis est requis';
+        if (!data.termsAccepted) newErrors.termsAccepted = 'Vous devez accepter les termes et conditions';
+        return newErrors;
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        const newErrors = validateForm();
+        if (Object.keys(newErrors).length) return setErrors(newErrors);
 
-        if (validateForm()) {
-            // Prepare data for submission
-            const reservationData = {
-                car_id: car.id,
-                pickup_place_id: pickup_location,
-                dropoff_place_id: return_location,
-                date_from: date_from,
-                date_to: date_to,
-                options: options,
-                client: {
-                    full_name: formData.full_name,
-                    email: formData.email,
-                    mobile_number: formData.mobile_number,
-                    identity_or_passport_number: formData.identity_or_passport_number,
-                    permit_license_id: formData.permit_license_id,
-                    address: formData.address
-                },
-                flight_number: formData.flight_number
-            };
-
-            // Submit form using Inertia or fetch
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/reservation/store';
-
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-
-            const addInput = (name: string, value: string) => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = name;
-                input.value = value;
-                form.appendChild(input);
-            };
-
-            // Add CSRF token
-            addInput('_token', csrfToken);
-
-            // Add reservation data
-            addInput('car_id', car.id.toString());
-            addInput('pickup_place_id', pickup_location);
-            addInput('dropoff_place_id', return_location);
-            addInput('date_from', date_from.split(' ')[0]);
-            addInput('time_from', formatTime(date_from));
-            addInput('date_to', date_to.split(' ')[0]);
-            addInput('time_to', formatTime(date_to));
-            addInput('flight_number', formData.flight_number);
-
-            // Add client data
-            addInput('full_name', formData.full_name);
-            addInput('email', formData.email);
-            addInput('mobile_number', formData.mobile_number);
-            addInput('identity_or_passport_number', formData.identity_or_passport_number);
-            addInput('permit_license_id', formData.permit_license_id);
-            addInput('address', formData.address);
-
-            // Add options
-            if (options.length > 0) {
-                addInput('added_options', JSON.stringify(options));
-            }
-
-            document.body.appendChild(form);
-            form.submit();
-        }
+        post(route('reservation.store'), {
+            onSuccess: () => {
+                window.location.href = route('reservation.thankyou');
+            },
+            onError: (errors) => {
+                setErrors(errors);
+            },
+            // Add this to handle JSON responses
+            preserveScroll: true,
+            preserveState: true,
+        });
     };
 
     const handlePrevious = () => {
@@ -256,7 +181,7 @@ export default function Checkout({
                                     <input
                                         type="text"
                                         name="full_name"
-                                        value={formData.full_name}
+                                        value={data.full_name}
                                         onChange={handleInputChange}
                                         placeholder="Nom complet"
                                         className={`w-full p-3 border ${errors.full_name ? 'border-red-500' : 'border-gray-300'} rounded-md`}
@@ -267,7 +192,7 @@ export default function Checkout({
                                     <input
                                         type="email"
                                         name="email"
-                                        value={formData.email}
+                                        value={data.email}
                                         onChange={handleInputChange}
                                         placeholder="Email"
                                         className={`w-full p-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md`}
@@ -281,7 +206,7 @@ export default function Checkout({
                                     <input
                                         type="tel"
                                         name="mobile_number"
-                                        value={formData.mobile_number}
+                                        value={data.mobile_number}
                                         onChange={handleInputChange}
                                         placeholder="Téléphone"
                                         className={`w-full p-3 border ${errors.mobile_number ? 'border-red-500' : 'border-gray-300'} rounded-md`}
@@ -291,8 +216,8 @@ export default function Checkout({
                                 <div>
                                     <input
                                         type="text"
-                                        name="address"
-                                        value={formData.address}
+                                        name="flight_number"
+                                        value={data.flight_number}
                                         onChange={handleInputChange}
                                         placeholder="Numéro de vol"
                                         className="w-full p-3 border border-gray-300 rounded-md"
@@ -305,7 +230,7 @@ export default function Checkout({
                                     <input
                                         type="text"
                                         name="permit_license_id"
-                                        value={formData.permit_license_id}
+                                        value={data.permit_license_id}
                                         onChange={handleInputChange}
                                         placeholder="Numéro de permis"
                                         className={`w-full p-3 border ${errors.permit_license_id ? 'border-red-500' : 'border-gray-300'} rounded-md`}
@@ -316,7 +241,7 @@ export default function Checkout({
                                     <input
                                         type="text"
                                         name="identity_or_passport_number"
-                                        value={formData.identity_or_passport_number}
+                                        value={data.identity_or_passport_number}
                                         onChange={handleInputChange}
                                         placeholder="Carte d'identité / Passeport"
                                         className={`w-full p-3 border ${errors.identity_or_passport_number ? 'border-red-500' : 'border-gray-300'} rounded-md`}
@@ -324,14 +249,26 @@ export default function Checkout({
                                     {errors.identity_or_passport_number && <p className="text-red-500 text-xs mt-1">{errors.identity_or_passport_number}</p>}
                                 </div>
                             </div>
-
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <input
+                                        type="text"
+                                        name="address"
+                                        value={data.address}
+                                        onChange={handleInputChange}
+                                        placeholder="Numéro de permis"
+                                        className={`w-full p-3 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded-md`}
+                                    />
+                                    {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
+                                </div>
+                            </div>
                             <div className="mb-6 flex items-start">
                                 <div className="flex items-center h-5">
                                     <input
                                         id="terms"
                                         type="checkbox"
                                         name="termsAccepted"
-                                        checked={formData.termsAccepted}
+                                        checked={data.termsAccepted}
                                         onChange={handleInputChange}
                                         className={`h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 ${errors.termsAccepted ? 'border-red-500' : ''}`}
                                     />
@@ -356,8 +293,9 @@ export default function Checkout({
                                 <button
                                     type="submit"
                                     className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded uppercase"
+                                    disabled={processing}
                                 >
-                                    Confirmer
+                                    {processing ? 'Processing...' : 'Confirmer'}
                                 </button>
                             </div>
                         </form>

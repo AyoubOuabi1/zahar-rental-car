@@ -69,8 +69,8 @@ class Reservation extends Model
         $days = $this->total_days;
 
         $carPrice = $this->car->price_per_day * $days;
-        $pickupPlace= $this->pickupPlace->price;
-        $dropOffPlace= $this->dropoffPlace->price;
+        $pickupPlace = $this->pickupPlace ? $this->pickupPlace->price : 0;
+        $dropOffPlace = $this->dropoffPlace ? $this->dropoffPlace->price : 0;
 
 
         $optionsTotal = 0;

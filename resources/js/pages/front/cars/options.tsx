@@ -53,6 +53,10 @@ export default function Options({
         return place ? place.title : 'Location inconnue';
     };
 
+    const getPlacePrice = (placeId: string) => {
+        const place = places.find(p => String(p.id) === String(placeId));
+        return place ? Number(place.price) : 0;
+    };
     // Toggle option selection
     const toggleOption = (optionId: number) => {
         setSelectedOptions(prev => {
@@ -83,7 +87,7 @@ export default function Options({
 
     useEffect(() => {
         // Base car price
-        const basePrice = car.price_per_day * diffDays;
+        const basePrice = car.price_per_day * diffDays + getPlacePrice(pickup_location) + getPlacePrice(return_location);
 
         // Options price
         const optionsPrice = Object.entries(selectedOptions).reduce((acc, [id, quantity]) => {
