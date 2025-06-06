@@ -30,16 +30,19 @@ class PlaceController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
+            'shortDescription' => 'nullable|string|max:255',
             'image_url' => 'required|url',
             'price' => 'required|numeric',
+            'showInHomePage' => 'boolean',
         ]);
 
         Place::create([
             'title' => $request->title,
             'description' => $request->description,
+            'shortDescription' => $request->shortDescription,
             'image_url' => $request->image_url,
             'price' => $request->price,
-
+            'showInHomePage' => $request->showInHomePage ?? false,
         ]);
 
         return redirect()->route('dashboard.places.index')->with('success', 'Place created successfully.');
@@ -50,8 +53,10 @@ class PlaceController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
+            'shortDescription' => 'nullable|string|max:255',
             'image_url' => 'required|url',
             'price' => 'required|numeric',
+            'showInHomePage' => 'boolean',
         ]);
 
         $place->update($request->all());

@@ -10,7 +10,12 @@ class Place extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'description', 'image_url','price'
+        'title',
+        'description',
+        'shortDescription',
+        'image_url',
+        'price',
+        'showInHomePage',
     ];
     public function pickupReservations()
     {
@@ -23,5 +28,6 @@ class Place extends Model
     }
     protected $casts = [
         'description' => 'string',
+        'showInHomePage' => 'boolean',
     ];
 }

@@ -7,7 +7,14 @@ import WhyChooseUs from '@/components/frontoffice/WhyChooseUs';
 import ZaharInNumbers from '@/components/frontoffice/ZaharInNumbers';
 import { Car } from '@/types/Car';
 import FrontOfficeLayout from '@/layouts/FrontOfficeLayout';
-
+import PlaceCarousel from '@/components/frontoffice/PlaceCarousel';
+interface Place {
+    id: number;
+    title: string;
+    shortDescription?: string;
+    image_url: string;
+    showInHomePage: boolean;
+}
 export default function Welcome() {
     const { cars , places } = usePage<{ cars: Car[] }>().props;
 
@@ -33,6 +40,9 @@ export default function Welcome() {
 
             <div>
                 <ZaharInNumbers />
+            </div>
+            <div>
+                <PlaceCarousel places={places} />
             </div>
         </FrontOfficeLayout>
     );
